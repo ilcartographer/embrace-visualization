@@ -10,7 +10,7 @@ class Window(Frame):
     def init_window(self):
         self.master.title("GUI")
         self.pack(fill=BOTH, expand=1)
-#sdfasdfa
+        
         menu = Menu(self.master)
         self.master.config(menu=menu)
 
