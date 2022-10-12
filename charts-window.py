@@ -68,7 +68,5 @@ class PageThree(tk.Frame):
         toolbar.update()
         canvas._tkcanvas.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
 
-some throw away code
-
 app = SeaofBTCapp()
 app.mainloop()
