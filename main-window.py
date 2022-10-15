@@ -66,12 +66,9 @@ class GraphPage(Frame):
 
 
 class LoadDataForm:
-    def __init__(self, master, load_action):
-        self.master = master
+    def __init__(self, top, load_action):
+        self.master = top
         self.submit_load_action = load_action
-
-        top = Toplevel()  # TODO: pass in as param?
-        top.geometry("750x250")
 
         # Create an Entry Widget in the Toplevel window
         entry = Entry(top, width=25)
