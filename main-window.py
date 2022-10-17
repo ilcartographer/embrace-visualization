@@ -1,4 +1,5 @@
 from tkinter import *
+from tkinter import filedialog
 
 LARGE_FONT = ("Verdana", 12)
 
@@ -61,7 +62,6 @@ class GraphPage(Frame):
         data_label.pack(pady=10, padx=10)
 
     def load_data(self, filename):
-        print(filename)
         self.data_filename.set(filename)
 
 
@@ -70,13 +70,21 @@ class LoadDataForm:
         self.master = top
         self.submit_load_action = load_action
 
+        self.selected_path = StringVar()
+
         # Create an Entry Widget in the Toplevel window
-        entry = Entry(top, width=25)
+        entry = Entry(top, width=25, textvariable=self.selected_path)
         entry.pack()
 
+        load_button = Button(top, text="Select file...", command=lambda: self.select_file())
+        load_button.pack() # TODO: How to do this side-by-side with the label?
         # Create a Button Widget in the Toplevel Window
         button = Button(top, text="Ok", command=lambda: self.submit(entry))
         button.pack(pady=5, side=TOP)
+
+    def select_file(self):
+        self.selected_path.set(filedialog.askopenfilename(initialdir="./", title="Select file",
+                                          filetypes=(("csv files", "*.csv"), ("all files", "*.*"))))
 
     def submit(self, data):
         self.submit_load_action(data.get())
