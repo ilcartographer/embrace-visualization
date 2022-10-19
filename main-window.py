@@ -1,12 +1,12 @@
 from tkinter import *
 from tkinter import filedialog
-
+import datamodel
+from datamodel import datamodel
 LARGE_FONT = ("Verdana", 12)
 
 
 def client_exit():
     exit()
-
 
 class MainWindow(Tk):
     def __init__(self):
@@ -53,16 +53,20 @@ class MainWindow(Tk):
 class GraphPage(Frame):
     def __init__(self, parent, controller):
         Frame.__init__(self, parent)
-        self.data_filename = StringVar()
+        self.disp = StringVar()#still required, currently works as display placeholder,
+        self.dm = datamodel(self.disp)#holds the actual data
+        self.disp.set(self.dm)#displays dm
+
         label = Label(self, text="This is the graph page", font=LARGE_FONT)
 
         label.pack(pady=10, padx=10)
 
-        data_label = Label(self, textvariable=self.data_filename, font=LARGE_FONT)
+        data_label = Label(self, textvariable=self.disp, font=LARGE_FONT)
         data_label.pack(pady=10, padx=10)
 
-    def load_data(self, filename):
-        self.data_filename.set(filename)
+    def load_data(self, filename):#updates dm, disp
+        self.dm.setnewurl(filename)
+        self.disp.set(self.dm)
 
 
 class LoadDataForm:
