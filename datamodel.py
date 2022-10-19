@@ -48,5 +48,11 @@ class datamodel:
     def getdatacolumn(self,select):#gets only column, specified by number, returns as a dataframe object
         return self.data.iloc[:,select]
 
+    def getcolumnlist(self,select):
+        temp = self.getdatacolumn(select)
+        return temp.values.tolist()
 
-
+#test1 = datamodel("Dataset/20200118/310/summary.csv")
+#print(test1)
+#test2 = test1.getcolumnlist(3)
+#print(test2)
