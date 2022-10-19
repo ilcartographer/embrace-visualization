@@ -45,14 +45,26 @@ class datamodel:
     def __str__(self):
         return "datamodel:" + self.url
 
-    def getdatacolumn(self,select):#gets only column, specified by number, returns as a dataframe object
-        return self.data.iloc[:,select]
+    def getdatacolumn(self,select):#gets only column, specified by number or string, returns as a dataframe object, can select by column name
+        tempindex = select
+        if type(select) is str:
+            tempindex = self.getcolumnindex(select)
+        return self.data.iloc[:,tempindex]
 
-    def getcolumnlist(self,select):
-        temp = self.getdatacolumn(select)
+    def getcolumnaslist(self,select):#returns selected column as a list
+        tempindex = select
+        if type(select) is str:
+            tempindex = self.getcolumnindex(select)
+        temp = self.getdatacolumn(tempindex)
         return temp.values.tolist()
+    def getcolumnindex(self,name):#returns numerical index of named column
+        index = 0
+        namelist = self.getcolumnnameslist()
+        if name in namelist:
+            index = namelist.index(name)
+        return index
+    def getcolumnnameslist(self):#returns list of column names
+        namelist = self.data
+        namelist = namelist.columns.tolist()
+        return namelist
 
-#test1 = datamodel("Dataset/20200118/310/summary.csv")
-#print(test1)
-#test2 = test1.getcolumnlist(3)
-#print(test2)
