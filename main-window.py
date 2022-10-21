@@ -1,14 +1,17 @@
+import os
 from tkinter import *
 from tkinter import filedialog
 import datamodel
-from datamodel import datamodel
+from datamodel import DataModel
 from matplotlib.figure import Figure
-from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg,NavigationToolbar2Tk)
+from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg, NavigationToolbar2Tk)
+
 LARGE_FONT = ("Verdana", 12)
 
 
 def client_exit():
     exit()
+
 
 class MainWindow(Tk):
     def __init__(self):
@@ -16,7 +19,7 @@ class MainWindow(Tk):
         self.data_file = None
         self.frames = None
         self.init_window()
-        
+
     def init_window(self):
         container = Frame(self)
         container.pack(side="top", fill="both", expand=True)
@@ -47,7 +50,6 @@ class MainWindow(Tk):
         frame.tkraise()
 
     def show_load_data(self):
-        print("show_load_data")
         form_window = Toplevel(self)
         LoadDataForm(form_window, self.frames[GraphPage].load_data)
 
@@ -110,12 +112,13 @@ class MainWindow(Tk):
         # placing the toolbar on the Tkinter window
         # canvas_3.get_tk_widget().pack()
 
+
 class GraphPage(Frame):
     def __init__(self, parent, controller):
         Frame.__init__(self, parent)
-        self.disp = StringVar()#still required, currently works as display placeholder,
-        self.dm = datamodel(self.disp)#holds the actual data
-        self.disp.set(self.dm)#displays dm
+        self.disp = StringVar()  # still required, currently works as display placeholder,
+        self.dm = DataModel(self.disp)  # holds the actual data
+        self.disp.set(self.dm)  # displays dm
         self.controller = controller
 
         label = Label(self, text="This is the graph page", font=LARGE_FONT)
@@ -125,34 +128,64 @@ class GraphPage(Frame):
         data_label = Label(self, textvariable=self.disp, font=LARGE_FONT)
         data_label.pack(pady=10, padx=10)
 
-
-
-    def load_data(self, filename):#updates dm, disp
+    def load_data(self, filename):  # updates dm, disp
         self.dm.setnewurl(filename)
         self.disp.set(self.dm)
 
-        self.controller.plot() #Creates the graphs when the "OK" button is clicked in Load Data
+        self.controller.plot()  # Creates the graphs when the "OK" button is clicked in Load Data
+
 
 class LoadDataForm:
     def __init__(self, top, load_action):
         self.master = top
         self.submit_load_action = load_action
 
-        self.selected_path = StringVar()
+        self.selected_dir = StringVar()
 
         # Create an Entry Widget in the Toplevel window
-        entry = Entry(top, width=25, textvariable=self.selected_path)
+        entry = Entry(top, width=25, textvariable=self.selected_dir)
         entry.pack()
 
         load_button = Button(top, text="Select file...", command=lambda: self.select_file())
-        load_button.pack() # TODO: How to do this side-by-side with the label?
+        load_button.pack()  # TODO: How to do this side-by-side with the label?
+
+        self.selected_date = StringVar()
+        self.selected_date.set("")
+
+        self.date_om = OptionMenu(top, self.selected_date, *[""])
+        self.date_om.pack()
+
+        self.selected_patient = StringVar()
+        self.patient_om = OptionMenu(top, self.selected_patient, *[""])
+        self.patient_om.pack()
+
         # Create a Button Widget in the Toplevel Window
         button = Button(top, text="Ok", command=lambda: self.submit(entry))
         button.pack(pady=5, side=TOP)
 
     def select_file(self):
-        self.selected_path.set(filedialog.askopenfilename(initialdir="./", title="Select file",
-                                          filetypes=(("csv files", "*.csv"), ("all files", "*.*"))))
+        data_dir = filedialog.askdirectory(initialdir="./", title="Select DataSet Directory...")
+        self.selected_dir.set(data_dir)
+
+        available_dates = [filename for filename in os.listdir(data_dir) if os.path.isdir(data_dir)]
+        self.update_option_menu(self.date_om, available_dates, self.on_date_change)
+        self.selected_date.set(available_dates[0])
+
+    def on_date_change(self, value):
+        self.selected_date.set(value)
+        self.update_patients()
+
+    def update_patients(self):
+        # TODO: Add option for each directory in the currently selected date directory (similar to above)
+        #   Directory to search should be self.selected_dir.get() + self.selected_date.get()
+        print("Update patients options")
+
+    def update_option_menu(self, om, options, callback):
+        menu = om["menu"]
+        menu.delete(0, "end")
+        for string in options:
+            menu.add_command(label=string,
+                             command=lambda value=string: callback(value))
 
     def submit(self, data):
         self.submit_load_action(data.get())
