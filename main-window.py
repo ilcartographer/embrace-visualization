@@ -2,6 +2,8 @@ from tkinter import *
 from tkinter import filedialog
 import datamodel
 from datamodel import datamodel
+from matplotlib.figure import Figure
+from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg,NavigationToolbar2Tk)
 LARGE_FONT = ("Verdana", 12)
 
 
@@ -49,6 +51,64 @@ class MainWindow(Tk):
         form_window = Toplevel(self)
         LoadDataForm(form_window, self.frames[GraphPage].load_data)
 
+    def plot(self):
+        # Data points being put into the graph, update this to fill with the values in the Excel sheet
+        points_x1 = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
+        points_y1 = [3, 8, 1, 10, 15, 0, 0, 7, 9, 14, 20, 31, 5, 7, 19, 19, 35, 15, 20, 21]
+
+        # ***************************************************GRAPH 1*******************************************
+        # the figure that will contain the plot
+        fig_1 = Figure(figsize=(10, 2.5), dpi=100)
+        # adding the subplot (I don't know exactly what a subplot does, but this defines the graph)
+        plot1 = fig_1.add_subplot(111)
+        # plotting graph 1
+        plot1.plot(points_x1, points_y1)
+        # creating the Tkinter canvas which houses the graphs
+        canvas_1 = FigureCanvasTkAgg(fig_1, master=self)
+        canvas_1.draw()
+        # placing the canvas on the Tkinter window
+        canvas_1.get_tk_widget().pack()
+        # creating the Matplotlib toolbar
+        # toolbar = NavigationToolbar2Tk(canvas_1, window)
+        # toolbar.update()
+        # placing the toolbar on the Tkinter window
+        # canvas_1.get_tk_widget().pack()
+
+        # ***************************************************GRAPH 2*******************************************
+        # the figure that will contain the plot
+        fig_2 = Figure(figsize=(10, 2.5), dpi=100)
+        # adding the subplot (I don't know exactly what a subplot does, but this defines the graph)
+        plot2 = fig_2.add_subplot(111)
+        # plotting graph 2
+        plot2.plot(points_x1, points_y1)
+        # creating the Tkinter canvas which houses the graphs
+        canvas_2 = FigureCanvasTkAgg(fig_2, master=self)
+        canvas_2.draw()
+        # placing the canvas on the Tkinter window
+        canvas_2.get_tk_widget().pack()
+        # creating the Matplotlib toolbar
+        # toolbar = NavigationToolbar2Tk(canvas_2, window)
+        # toolbar.update()
+        # placing the toolbar on the Tkinter window
+        # canvas_2.get_tk_widget().pack()
+
+        # ***************************************************GRAPH 3*******************************************
+        # the figure that will contain the plot
+        fig_3 = Figure(figsize=(10, 2.5), dpi=100)
+        # adding the subplot (I don't know exactly what a subplot does, but this defines the graph)
+        plot3 = fig_3.add_subplot(111)
+        # plotting graph 2
+        plot3.plot(points_x1, points_y1)
+        # creating the Tkinter canvas which houses the graphs
+        canvas_3 = FigureCanvasTkAgg(fig_3, master=self)
+        canvas_3.draw()
+        # placing the canvas on the Tkinter window
+        canvas_3.get_tk_widget().pack()
+        # creating the Matplotlib toolbar
+        # toolbar = NavigationToolbar2Tk(canvas_3, window)
+        # toolbar.update()
+        # placing the toolbar on the Tkinter window
+        # canvas_3.get_tk_widget().pack()
 
 class GraphPage(Frame):
     def __init__(self, parent, controller):
@@ -56,6 +116,7 @@ class GraphPage(Frame):
         self.disp = StringVar()#still required, currently works as display placeholder,
         self.dm = datamodel(self.disp)#holds the actual data
         self.disp.set(self.dm)#displays dm
+        self.controller = controller
 
         label = Label(self, text="This is the graph page", font=LARGE_FONT)
 
@@ -64,10 +125,13 @@ class GraphPage(Frame):
         data_label = Label(self, textvariable=self.disp, font=LARGE_FONT)
         data_label.pack(pady=10, padx=10)
 
+
+
     def load_data(self, filename):#updates dm, disp
         self.dm.setnewurl(filename)
         self.disp.set(self.dm)
 
+        self.controller.plot() #Creates the graphs when the "OK" button is clicked in Load Data
 
 class LoadDataForm:
     def __init__(self, top, load_action):

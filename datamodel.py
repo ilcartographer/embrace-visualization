@@ -1,9 +1,5 @@
-import inline as inline
-import matplotlib
 import pandas as pd # needs pandas installed
 import tkinter as tk
-import numpy as np
-import matplotlib.pyplot as plt
 
 #test comment
 class datamodel:
