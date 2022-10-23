@@ -176,13 +176,22 @@ class LoadDataForm:
 
     def on_date_change(self, value):
         self.selected_date.set(value)
-        self.update_patients()
+        self.update_patients(value)
 
-    def update_patients(self):
+    def update_patients(self,date):
+        local_dir = self.selected_dir.get() +"/"+ date#string file path calculation
+        print(local_dir)
+        available_patients = [filename for filename in os.listdir(local_dir) if os.path.isdir(local_dir)]
+        print(available_patients)
 
+        self.update_option_menu(self.patient_om, available_patients, self.on_patient_change)
+        self.selected_patient.set(available_patients[0])
         # TODO: Add option for each directory in the currently selected date directory (similar to above)
         #   Directory to search should be self.selected_dir.get() + self.selected_date.get()
         print("Update patients options")
+
+    def on_patient_change(self,value):
+        self.selected_patient.set(value)
 
     def update_option_menu(self, om, options, callback):
         menu = om["menu"]
