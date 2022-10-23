@@ -122,12 +122,12 @@ class GraphPage(Frame):
         self.disp.set(self.dm)  # displays dm
         self.controller = controller
 
-        label = Label(self, text="This is the graph page", font=LARGE_FONT)
+        #label = Label(self, text="This is the graph page", font=LARGE_FONT)
 
-        label.pack(pady=10, padx=10)
+        #label.pack(pady=10, padx=10)
 
-        data_label = Label(self, textvariable=self.disp, font=LARGE_FONT)
-        data_label.pack(pady=10, padx=10)
+        #data_label = Label(self, textvariable=self.disp, font=LARGE_FONT)
+        #data_label.pack(pady=10, padx=10)
 
     def load_data(self, filename):  # updates dm, disp
         self.dm.setnewurl(filename)
@@ -179,6 +179,7 @@ class LoadDataForm:
         self.update_patients()
 
     def update_patients(self):
+
         # TODO: Add option for each directory in the currently selected date directory (similar to above)
         #   Directory to search should be self.selected_dir.get() + self.selected_date.get()
         print("Update patients options")
