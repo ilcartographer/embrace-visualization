@@ -54,7 +54,7 @@ class MainWindow(Tk):
         form_window = Toplevel(self)
         LoadDataForm(form_window, self.frames[GraphPage], self)
 
-    def plot(self):
+    def slave_plot(self):
         # Data points being put into the graph, update this to fill with the values in the Excel sheet
         points_x1 = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
         points_y1 = [3, 8, 1, 10, 15, 0, 0, 7, 9, 14, 20, 31, 5, 7, 19, 19, 35, 15, 20, 21]
@@ -68,50 +68,30 @@ class MainWindow(Tk):
         plot1.plot(points_x1, points_y1)
         # creating the Tkinter canvas which houses the graphs
         canvas_1 = FigureCanvasTkAgg(fig_1, master=self)
-        canvas_1.draw()
+        return canvas_1
         # placing the canvas on the Tkinter window
+
+    def plot(self):
+        # Data points being put into the graph, update this to fill with the values in the Excel sheet
+
+        points_x1 = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
+        points_y1 = [3, 8, 1, 10, 15, 0, 0, 7, 9, 14, 20, 31, 5, 7, 19, 19, 35, 15, 20, 21]
+
+        # ***************************************************GRAPH 1*******************************************
+
+        canvas_1 = self.slave_plot()
+        canvas_1.draw()
         canvas_1.get_tk_widget().pack()
-        # creating the Matplotlib toolbar
-        # toolbar = NavigationToolbar2Tk(canvas_1, window)
-        # toolbar.update()
-        # placing the toolbar on the Tkinter window
-        # canvas_1.get_tk_widget().pack()
 
         # ***************************************************GRAPH 2*******************************************
-        # the figure that will contain the plot
-        fig_2 = Figure(figsize=(10, 2.5), dpi=100)
-        # adding the subplot (I don't know exactly what a subplot does, but this defines the graph)
-        plot2 = fig_2.add_subplot(111)
-        # plotting graph 2
-        plot2.plot(points_x1, points_y1)
-        # creating the Tkinter canvas which houses the graphs
-        canvas_2 = FigureCanvasTkAgg(fig_2, master=self)
+        canvas_2 = self.slave_plot()
         canvas_2.draw()
-        # placing the canvas on the Tkinter window
         canvas_2.get_tk_widget().pack()
-        # creating the Matplotlib toolbar
-        # toolbar = NavigationToolbar2Tk(canvas_2, window)
-        # toolbar.update()
-        # placing the toolbar on the Tkinter window
-        # canvas_2.get_tk_widget().pack()
 
         # ***************************************************GRAPH 3*******************************************
-        # the figure that will contain the plot
-        fig_3 = Figure(figsize=(10, 2.5), dpi=100)
-        # adding the subplot (I don't know exactly what a subplot does, but this defines the graph)
-        plot3 = fig_3.add_subplot(111)
-        # plotting graph 2
-        plot3.plot(points_x1, points_y1)
-        # creating the Tkinter canvas which houses the graphs
-        canvas_3 = FigureCanvasTkAgg(fig_3, master=self)
+        canvas_3 = self.slave_plot()
         canvas_3.draw()
-        # placing the canvas on the Tkinter window
         canvas_3.get_tk_widget().pack()
-        # creating the Matplotlib toolbar
-        # toolbar = NavigationToolbar2Tk(canvas_3, window)
-        # toolbar.update()
-        # placing the toolbar on the Tkinter window
-        # canvas_3.get_tk_widget().pack()
 
 
 class GraphPage(Frame):
@@ -122,12 +102,12 @@ class GraphPage(Frame):
         self.disp.set(self.dm)  # displays dm
         self.controller = controller
 
-        #label = Label(self, text="This is the graph page", font=LARGE_FONT)
+        # label = Label(self, text="This is the graph page", font=LARGE_FONT)
 
-        #label.pack(pady=10, padx=10)
+        # label.pack(pady=10, padx=10)
 
-        #data_label = Label(self, textvariable=self.disp, font=LARGE_FONT)
-        #data_label.pack(pady=10, padx=10)
+        # data_label = Label(self, textvariable=self.disp, font=LARGE_FONT)
+        # data_label.pack(pady=10, padx=10)
 
     def load_data(self, filename):  # updates dm, disp
         self.dm.setnewurl(filename)
@@ -178,19 +158,18 @@ class LoadDataForm:
         self.selected_date.set(value)
         self.update_patients(value)
 
-    def update_patients(self,date):
-        local_dir = self.selected_dir.get() +"/"+ date#string file path calculation
+    def update_patients(self, date):
+        local_dir = self.selected_dir.get() + "/" + date  # string file path calculation
 
         available_patients = [filename for filename in os.listdir(local_dir) if os.path.isdir(local_dir)]
-
 
         self.update_option_menu(self.patient_om, available_patients, self.on_patient_change)
         self.selected_patient.set(available_patients[0])
         # TODO: Add option for each directory in the currently selected date directory (similar to above)
         #   Directory to search should be self.selected_dir.get() + self.selected_date.get()
-        #print("Update patients options")
+        # print("Update patients options")
 
-    def on_patient_change(self,value):
+    def on_patient_change(self, value):
         self.selected_patient.set(value)
 
     def update_option_menu(self, om, options, callback):
