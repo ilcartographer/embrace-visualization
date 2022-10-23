@@ -182,7 +182,7 @@ class LoadDataForm:
     def submit(self, data):
         # self.submit_load_action(data.get())
         # change path to work with your computer
-        self.submit_load_action("Dataset/20200120/312/summary.csv")
+        self.submit_load_action(self.selected_dir.get()+"/"+self.selected_date.get()+"/"+self.selected_patient.get()+"/summary.csv")
         self.show_time_series_builder()
         self.master.destroy()
 
