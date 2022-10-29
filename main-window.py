@@ -196,10 +196,19 @@ class LoadDataForm:
 class TimeSeriesBuilder:
     def __init__(self, window, column_names, main_window, dm):
         self.master = window
-        self.column_names = column_names
+        self.invalid_series = 'time'
+        self.column_names = filter(self.filter_callback, column_names)
         self.main_window = main_window
         self.dm = dm
         self.add_widgets()
+
+    def filter_callback(self, name):
+        if (self.invalid_series not in name.lower()):
+            return True
+        else: 
+            return False
+
+
     def add_widgets(self):
         first_frame_vertical = Frame(self.master)
         available_label = Label(first_frame_vertical, text="Available Series", font=SMALL_FONT)
