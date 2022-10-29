@@ -154,6 +154,7 @@ class LoadDataForm:
         available_dates = [filename for filename in os.listdir(data_dir) if os.path.isdir(data_dir)]
         self.update_option_menu(self.date_om, available_dates, self.on_date_change)
         self.selected_date.set(available_dates[0])
+        self.update_patients(self.selected_date.get())
 
     def on_date_change(self, value):
         self.selected_date.set(value)
