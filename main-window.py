@@ -52,6 +52,7 @@ class MainWindow(Tk):
 
     def show_load_data(self):
         form_window = Toplevel(self)
+        form_window.geometry("500x150")
         LoadDataForm(form_window, self.frames[GraphPage], self)
 
     def slave_plot(self,time,ind):
@@ -127,7 +128,7 @@ class LoadDataForm:
 
         # Create an Entry Widget in the Toplevel window
         entry = Entry(top, width=25, textvariable=self.selected_dir)
-        entry.pack()
+        entry.pack(fill='x')
 
         load_button = Button(top, text="Select file...", command=lambda: self.select_file())
         load_button.pack()  # TODO: How to do this side-by-side with the label?
@@ -187,7 +188,7 @@ class LoadDataForm:
         self.master.destroy()
 
     def show_time_series_builder(self):
-        time_series_window = Toplevel(height='1000', width='1000')
+        time_series_window = Toplevel()
         TimeSeriesBuilder(time_series_window, self.get_column_names(), self.main_window, self.dm)
 
 
@@ -256,4 +257,5 @@ class TimeSeriesBuilder:
 
 
 app = MainWindow()
+app.geometry("1000x1000")
 app.mainloop()
