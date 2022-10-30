@@ -1,10 +1,8 @@
 import os
 from tkinter import *
 from tkinter import filedialog
-import datamodel
+
 from datamodel import DataModel
-from matplotlib.figure import Figure
-from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg, NavigationToolbar2Tk)
 from timeseries import TimeSeries
 
 LARGE_FONT = ("Verdana", 12)
@@ -60,45 +58,6 @@ class MainWindow(Tk):
         form_window.geometry("500x150")
         LoadDataForm(form_window, self.frames[GraphPage], self)
 
-    # def slave_plot(self,time,ind):
-    #     # Data points being put into the graph, update this to fill with the values in the Excel sheet
-    #     #points_x1 = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
-    #     #points_y1 = [3, 8, 1, 10, 15, 0, 0, 7, 9, 14, 20, 31, 5, 7, 19, 19, 35, 15, 20, 21]
-    #     points_x1 = time
-    #     points_y1 = ind
-    #     # ***************************************************GRAPH 1*******************************************
-    #     # the figure that will contain the plot
-    #     fig_1 = Figure(figsize=(10, 2.5), dpi=100)
-    #     # adding the subplot (I don't know exactly what a subplot does, but this defines the graph)
-    #     plot1 = fig_1.add_subplot(111)
-    #     # plotting graph 1
-    #     plot1.plot(points_x1, points_y1)
-    #     # creating the Tkinter canvas which houses the graphs
-    #     canvas_1 = FigureCanvasTkAgg(fig_1, master=self)
-    #     return canvas_1
-
-
-    # def plot(self,time_axis,ind1,ind2,ind3):
-    #     # Data points being put into the graph, update this to fill with the values in the Excel sheet
-
-    #     points_x1 = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
-    #     points_y1 = [3, 8, 1, 10, 15, 0, 0, 7, 9, 14, 20, 31, 5, 7, 19, 19, 35, 15, 20, 21]
-    #     # ***************************************************GRAPH 1*******************************************
-    #     canvas_1 = self.slave_plot(time_axis,ind1)
-    #     # placing the canvas on the Tkinter window
-    #     canvas_1.draw()
-    #     canvas_1.get_tk_widget().pack()
-
-    #     # ***************************************************GRAPH 2*******************************************
-    #     canvas_2 = self.slave_plot(time_axis,ind2)
-    #     canvas_2.draw()
-    #     canvas_2.get_tk_widget().pack()
-
-    #     # ***************************************************GRAPH 3*******************************************
-    #     canvas_3 = self.slave_plot(time_axis,ind3)
-    #     canvas_3.draw()
-    #     canvas_3.get_tk_widget().pack()
-
 
 class GraphPage(Frame):
     def __init__(self, parent, controller):
@@ -107,13 +66,6 @@ class GraphPage(Frame):
         self.dm = DataModel(self.disp)  # holds the actual data
         self.disp.set(self.dm)  # displays dm
         self.controller = controller
-
-        #label = Label(self, text="This is the graph page", font=LARGE_FONT)
-
-        #label.pack(pady=10, padx=10)
-
-        #data_label = Label(self, textvariable=self.disp, font=LARGE_FONT)
-        #data_label.pack(pady=10, padx=10)
 
     def load_data(self, filename):  # updates dm, disp
         self.dm.setnewurl(filename)
@@ -189,7 +141,8 @@ class LoadDataForm:
     def submit(self, data):
         # self.submit_load_action(data.get())
         # change path to work with your computer
-        self.submit_load_action(self.selected_dir.get()+"/"+self.selected_date.get()+"/"+self.selected_patient.get()+"/summary.csv")
+        self.submit_load_action(
+            self.selected_dir.get() + "/" + self.selected_date.get() + "/" + self.selected_patient.get() + "/summary.csv")
         self.show_time_series_builder()
         self.master.destroy()
 
@@ -210,9 +163,8 @@ class TimeSeriesBuilder:
     def filter_callback(self, name):
         if (self.invalid_series not in name.lower()):
             return True
-        else: 
+        else:
             return False
-
 
     def add_widgets(self):
         first_frame_vertical = Frame(self.master)
@@ -267,12 +219,11 @@ class TimeSeriesBuilder:
         cur_index = 0
         while cur_index < self.lb_selected.size():
             selected_time_series_names.append(self.lb_selected.get(cur_index))
-            cur_index += 1 
+            cur_index += 1
 
         time_series = TimeSeries(self.main_window, self.dm)
         time_series.plot_selected_group(selected_time_series_names)
         self.main_window.time_series = time_series
-        #self.main_window.add_time_series_builder_command()
         self.master.destroy()
 
 
