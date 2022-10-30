@@ -1,6 +1,8 @@
 import pandas as pd  # needs pandas installed
 import tkinter as tk
 
+from dataset import *
+
 
 # test comment
 class DataModel:
@@ -65,3 +67,8 @@ class DataModel:
         namelist = self.data
         namelist = namelist.columns.tolist()
         return namelist
+
+    def getdatasetforfeature(self, time, feature):
+        # Create list of data points for the given
+        datapoints = list(map(lambda x, y: DataPoint(x, y), self.getcolumnaslist(time), self.getcolumnaslist(feature)))
+        return DataSet(feature, datapoints)

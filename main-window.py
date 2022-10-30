@@ -6,6 +6,8 @@ from datamodel import DataModel
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg, NavigationToolbar2Tk)
 
+from dataset import AggregatedDataSet
+
 LARGE_FONT = ("Verdana", 12)
 SMALL_FONT = ("Verdana", 8)
 
@@ -54,44 +56,8 @@ class MainWindow(Tk):
         form_window = Toplevel(self)
         LoadDataForm(form_window, self.frames[GraphPage], self)
 
-    def slave_plot(self,time,ind):
-        # Data points being put into the graph, update this to fill with the values in the Excel sheet
-        #points_x1 = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
-        #points_y1 = [3, 8, 1, 10, 15, 0, 0, 7, 9, 14, 20, 31, 5, 7, 19, 19, 35, 15, 20, 21]
-        points_x1 = time
-        points_y1 = ind
-        # ***************************************************GRAPH 1*******************************************
-        # the figure that will contain the plot
-        fig_1 = Figure(figsize=(10, 2.5), dpi=100)
-        # adding the subplot (I don't know exactly what a subplot does, but this defines the graph)
-        plot1 = fig_1.add_subplot(111)
-        # plotting graph 1
-        plot1.plot(points_x1, points_y1)
-        # creating the Tkinter canvas which houses the graphs
-        canvas_1 = FigureCanvasTkAgg(fig_1, master=self)
-        return canvas_1
-
-
-    def plot(self,time_axis,ind1,ind2,ind3):
-        # Data points being put into the graph, update this to fill with the values in the Excel sheet
-
-        points_x1 = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
-        points_y1 = [3, 8, 1, 10, 15, 0, 0, 7, 9, 14, 20, 31, 5, 7, 19, 19, 35, 15, 20, 21]
-        # ***************************************************GRAPH 1*******************************************
-        canvas_1 = self.slave_plot(time_axis,ind1)
-        # placing the canvas on the Tkinter window
-        canvas_1.draw()
-        canvas_1.get_tk_widget().pack()
-
-        # ***************************************************GRAPH 2*******************************************
-        canvas_2 = self.slave_plot(time_axis,ind2)
-        canvas_2.draw()
-        canvas_2.get_tk_widget().pack()
-
-        # ***************************************************GRAPH 3*******************************************
-        canvas_3 = self.slave_plot(time_axis,ind3)
-        canvas_3.draw()
-        canvas_3.get_tk_widget().pack()
+    def plot(self, time_axis, ind1, ind2, ind3):
+        self.frames[GraphPage].plot(time_axis, ind1, ind2, ind3)
 
 
 class GraphPage(Frame):
@@ -99,22 +65,33 @@ class GraphPage(Frame):
         Frame.__init__(self, parent)
         self.disp = StringVar()  # still required, currently works as display placeholder,
         self.dm = DataModel(self.disp)  # holds the actual data
-        self.disp.set(self.dm)  # displays dm
         self.controller = controller
 
-        #label = Label(self, text="This is the graph page", font=LARGE_FONT)
+        label = Label(self, text="This is the graph page", font=LARGE_FONT)
 
-        #label.pack(pady=10, padx=10)
+        label.pack(pady=10, padx=10)
 
-        #data_label = Label(self, textvariable=self.disp, font=LARGE_FONT)
-        #data_label.pack(pady=10, padx=10)
+        # f = Figure(figsize=(5, 5), dpi=100)
+        # a = f.add_subplot(111)
+        # a.plot([1, 2, 3, 4, 5, 6, 7, 8], [5, 6, 1, 3, 8, 9, 3, 5])
+        #
+        # f.gca().get_xaxis().set_ticks([])
+        # f.gca().get_yaxis().set_ticks([])
+        # canvas = FigureCanvasTkAgg(f, self)
+        # canvas.draw()
+        # canvas.get_tk_widget().pack(side=BOTTOM, fill=BOTH, expand=True)
+
 
     def load_data(self, filename):  # updates dm, disp
         self.dm.setnewurl(filename)
-        self.disp.set(self.dm)
+        # self.disp.set(self.dm)
 
         # self.controller.plot()  # Creates the graphs when the "OK" button is clicked in Load Data
 
+    def plot(self, time_axis, ind1, ind2, ind3):
+        AggregatedDataSet(self, self.dm.getdatasetforfeature(time_axis, ind1)).render()
+        AggregatedDataSet(self, self.dm.getdatasetforfeature(time_axis, ind2)).render()
+        AggregatedDataSet(self, self.dm.getdatasetforfeature(time_axis, ind3)).render()
 
 class LoadDataForm:
     def __init__(self, top, graph_page, main_window):
@@ -246,11 +223,11 @@ class TimeSeriesBuilder:
             lb_origin.delete(option_index)
 
     def finish(self):
-        time_axis = self.dm.getcolumnaslist(0)
-        ind_1 = self.dm.getcolumnaslist(self.lb_selected.get(0))
-        ind_2 = self.dm.getcolumnaslist(self.lb_selected.get(1))
-        ind_3 = self.dm.getcolumnaslist(self.lb_selected.get(2))
-        self.main_window.plot(time_axis,ind_1,ind_2,ind_3)  # Creates the graphs when the "OK" button is clicked in Load Data
+        time_axis = "Datetime (UTC)" # todo: load from form
+        # ind_1 = self.dm.getcolumnaslist(self.lb_selected.get(0))
+        # ind_2 = self.dm.getcolumnaslist(self.lb_selected.get(1))
+        # ind_3 = self.dm.getcolumnaslist(self.lb_selected.get(2))
+        self.main_window.plot(time_axis,self.lb_selected.get(0),self.lb_selected.get(1),self.lb_selected.get(2))  # Creates the graphs when the "OK" button is clicked in Load Data
 
         self.master.destroy()
 
