@@ -227,7 +227,7 @@ class TimeSeriesBuilder:
             lb_available.insert(index, series_name)
         lb_available.pack(side='left', anchor='w')
         second_frame_horizontal = Frame(second_frame_vertical)
-        right_arrow_photo = PhotoImage(file='right_arrow.png')
+        right_arrow_photo = PhotoImage(file='images/right_arrow.png')
 
         # store extra reference to photo so gc doesn't clear
         gc_right_label = Label(image=right_arrow_photo)
@@ -236,7 +236,7 @@ class TimeSeriesBuilder:
         right_arrow_button = Button(second_frame_horizontal, height=20, width=40, image=right_arrow_photo,
                                     command=lambda: self.move_selections(lb_available, self.lb_selected))
         right_arrow_button.pack(side='top', anchor='n')
-        left_arrow_photo = PhotoImage(file='left_arrow.png')
+        left_arrow_photo = PhotoImage(file='images/left_arrow.png')
 
         # store extra reference to photo so gc doesn't clear
         gc_left_label = Label(image=left_arrow_photo)
