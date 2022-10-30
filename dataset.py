@@ -48,3 +48,5 @@ class AggregatedDataSet:
         canvas = FigureCanvasTkAgg(figure, self.master)
         canvas.draw()
         canvas.get_tk_widget().pack(side=BOTTOM, fill=BOTH, expand=True)
+
+        return canvas

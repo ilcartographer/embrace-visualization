@@ -75,6 +75,7 @@ class GraphPage(Frame):
 
         label.pack(pady=10, padx=10)
 
+        # Note: Leaving this here for now to mess with different figure settings more efficiently
         # f = Figure(figsize=(5, 5), dpi=100)
         # a = f.add_subplot(111)
         # a.plot([1, 2, 3, 4, 5, 6, 7, 8], [5, 6, 1, 3, 8, 9, 3, 5])
@@ -237,12 +238,6 @@ class TimeSeriesBuilder:
             lb_origin.delete(option_index)
 
     def finish(self):
-        time_axis = "Datetime (UTC)" # todo: load from form
-        # ind_1 = self.dm.getcolumnaslist(self.lb_selected.get(0))
-        # ind_2 = self.dm.getcolumnaslist(self.lb_selected.get(1))
-        # ind_3 = self.dm.getcolumnaslist(self.lb_selected.get(2))
-        self.main_window.plot(time_axis,self.lb_selected.get(0),self.lb_selected.get(1),self.lb_selected.get(2))  # Creates the graphs when the "OK" button is clicked in Load Data
-
         selected_time_series_names = []
         cur_index = 0
         while cur_index < self.lb_selected.size():
