@@ -5,6 +5,7 @@ import datamodel
 from datamodel import DataModel
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg, NavigationToolbar2Tk)
+from timeseries import TimeSeries
 
 LARGE_FONT = ("Verdana", 12)
 SMALL_FONT = ("Verdana", 8)
@@ -27,6 +28,10 @@ class MainWindow(Tk):
 
         container.grid_rowconfigure(0, weight=1)
         container.grid_columnconfigure(0, weight=1)
+
+        # TODO get scrollbar working to be able to see all graphs
+        vertical_scrollbar = Scrollbar(self)
+        vertical_scrollbar.pack(side='right', fill='y')
 
         menu = Menu(self)
         self.config(menu=menu)
@@ -52,46 +57,47 @@ class MainWindow(Tk):
 
     def show_load_data(self):
         form_window = Toplevel(self)
+        form_window.geometry("500x150")
         LoadDataForm(form_window, self.frames[GraphPage], self)
 
-    def slave_plot(self,time,ind):
-        # Data points being put into the graph, update this to fill with the values in the Excel sheet
-        #points_x1 = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
-        #points_y1 = [3, 8, 1, 10, 15, 0, 0, 7, 9, 14, 20, 31, 5, 7, 19, 19, 35, 15, 20, 21]
-        points_x1 = time
-        points_y1 = ind
-        # ***************************************************GRAPH 1*******************************************
-        # the figure that will contain the plot
-        fig_1 = Figure(figsize=(10, 2.5), dpi=100)
-        # adding the subplot (I don't know exactly what a subplot does, but this defines the graph)
-        plot1 = fig_1.add_subplot(111)
-        # plotting graph 1
-        plot1.plot(points_x1, points_y1)
-        # creating the Tkinter canvas which houses the graphs
-        canvas_1 = FigureCanvasTkAgg(fig_1, master=self)
-        return canvas_1
+    # def slave_plot(self,time,ind):
+    #     # Data points being put into the graph, update this to fill with the values in the Excel sheet
+    #     #points_x1 = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
+    #     #points_y1 = [3, 8, 1, 10, 15, 0, 0, 7, 9, 14, 20, 31, 5, 7, 19, 19, 35, 15, 20, 21]
+    #     points_x1 = time
+    #     points_y1 = ind
+    #     # ***************************************************GRAPH 1*******************************************
+    #     # the figure that will contain the plot
+    #     fig_1 = Figure(figsize=(10, 2.5), dpi=100)
+    #     # adding the subplot (I don't know exactly what a subplot does, but this defines the graph)
+    #     plot1 = fig_1.add_subplot(111)
+    #     # plotting graph 1
+    #     plot1.plot(points_x1, points_y1)
+    #     # creating the Tkinter canvas which houses the graphs
+    #     canvas_1 = FigureCanvasTkAgg(fig_1, master=self)
+    #     return canvas_1
 
 
-    def plot(self,time_axis,ind1,ind2,ind3):
-        # Data points being put into the graph, update this to fill with the values in the Excel sheet
+    # def plot(self,time_axis,ind1,ind2,ind3):
+    #     # Data points being put into the graph, update this to fill with the values in the Excel sheet
 
-        points_x1 = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
-        points_y1 = [3, 8, 1, 10, 15, 0, 0, 7, 9, 14, 20, 31, 5, 7, 19, 19, 35, 15, 20, 21]
-        # ***************************************************GRAPH 1*******************************************
-        canvas_1 = self.slave_plot(time_axis,ind1)
-        # placing the canvas on the Tkinter window
-        canvas_1.draw()
-        canvas_1.get_tk_widget().pack()
+    #     points_x1 = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
+    #     points_y1 = [3, 8, 1, 10, 15, 0, 0, 7, 9, 14, 20, 31, 5, 7, 19, 19, 35, 15, 20, 21]
+    #     # ***************************************************GRAPH 1*******************************************
+    #     canvas_1 = self.slave_plot(time_axis,ind1)
+    #     # placing the canvas on the Tkinter window
+    #     canvas_1.draw()
+    #     canvas_1.get_tk_widget().pack()
 
-        # ***************************************************GRAPH 2*******************************************
-        canvas_2 = self.slave_plot(time_axis,ind2)
-        canvas_2.draw()
-        canvas_2.get_tk_widget().pack()
+    #     # ***************************************************GRAPH 2*******************************************
+    #     canvas_2 = self.slave_plot(time_axis,ind2)
+    #     canvas_2.draw()
+    #     canvas_2.get_tk_widget().pack()
 
-        # ***************************************************GRAPH 3*******************************************
-        canvas_3 = self.slave_plot(time_axis,ind3)
-        canvas_3.draw()
-        canvas_3.get_tk_widget().pack()
+    #     # ***************************************************GRAPH 3*******************************************
+    #     canvas_3 = self.slave_plot(time_axis,ind3)
+    #     canvas_3.draw()
+    #     canvas_3.get_tk_widget().pack()
 
 
 class GraphPage(Frame):
@@ -127,7 +133,7 @@ class LoadDataForm:
 
         # Create an Entry Widget in the Toplevel window
         entry = Entry(top, width=25, textvariable=self.selected_dir)
-        entry.pack()
+        entry.pack(fill='x')
 
         load_button = Button(top, text="Select file...", command=lambda: self.select_file())
         load_button.pack()  # TODO: How to do this side-by-side with the label?
@@ -153,6 +159,7 @@ class LoadDataForm:
         available_dates = [filename for filename in os.listdir(data_dir) if os.path.isdir(data_dir)]
         self.update_option_menu(self.date_om, available_dates, self.on_date_change)
         self.selected_date.set(available_dates[0])
+        self.update_patients(self.selected_date.get())
 
     def on_date_change(self, value):
         self.selected_date.set(value)
@@ -187,17 +194,26 @@ class LoadDataForm:
         self.master.destroy()
 
     def show_time_series_builder(self):
-        time_series_window = Toplevel(height='1000', width='1000')
+        time_series_window = Toplevel()
         TimeSeriesBuilder(time_series_window, self.get_column_names(), self.main_window, self.dm)
 
 
 class TimeSeriesBuilder:
     def __init__(self, window, column_names, main_window, dm):
         self.master = window
-        self.column_names = column_names
+        self.invalid_series = 'time'
+        self.column_names = filter(self.filter_callback, column_names)
         self.main_window = main_window
         self.dm = dm
         self.add_widgets()
+
+    def filter_callback(self, name):
+        if (self.invalid_series not in name.lower()):
+            return True
+        else: 
+            return False
+
+
     def add_widgets(self):
         first_frame_vertical = Frame(self.master)
         available_label = Label(first_frame_vertical, text="Available Series", font=SMALL_FONT)
@@ -211,7 +227,7 @@ class TimeSeriesBuilder:
             lb_available.insert(index, series_name)
         lb_available.pack(side='left', anchor='w')
         second_frame_horizontal = Frame(second_frame_vertical)
-        right_arrow_photo = PhotoImage(file='right_arrow.png')
+        right_arrow_photo = PhotoImage(file='images/right_arrow.png')
 
         # store extra reference to photo so gc doesn't clear
         gc_right_label = Label(image=right_arrow_photo)
@@ -220,7 +236,7 @@ class TimeSeriesBuilder:
         right_arrow_button = Button(second_frame_horizontal, height=20, width=40, image=right_arrow_photo,
                                     command=lambda: self.move_selections(lb_available, self.lb_selected))
         right_arrow_button.pack(side='top', anchor='n')
-        left_arrow_photo = PhotoImage(file='left_arrow.png')
+        left_arrow_photo = PhotoImage(file='images/left_arrow.png')
 
         # store extra reference to photo so gc doesn't clear
         gc_left_label = Label(image=left_arrow_photo)
@@ -246,14 +262,20 @@ class TimeSeriesBuilder:
             lb_origin.delete(option_index)
 
     def finish(self):
-        time_axis = self.dm.getcolumnaslist(0)
-        ind_1 = self.dm.getcolumnaslist(self.lb_selected.get(0))
-        ind_2 = self.dm.getcolumnaslist(self.lb_selected.get(1))
-        ind_3 = self.dm.getcolumnaslist(self.lb_selected.get(2))
-        self.main_window.plot(time_axis,ind_1,ind_2,ind_3)  # Creates the graphs when the "OK" button is clicked in Load Data
 
+        selected_time_series_names = []
+        cur_index = 0
+        while cur_index < self.lb_selected.size():
+            selected_time_series_names.append(self.lb_selected.get(cur_index))
+            cur_index += 1 
+
+        time_series = TimeSeries(self.main_window, self.dm)
+        time_series.plot_selected_group(selected_time_series_names)
+        self.main_window.time_series = time_series
+        #self.main_window.add_time_series_builder_command()
         self.master.destroy()
 
 
 app = MainWindow()
+app.geometry("1000x1000")
 app.mainloop()
