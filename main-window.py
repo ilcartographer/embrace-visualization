@@ -3,8 +3,7 @@ from tkinter import *
 from tkinter import filedialog
 import datamodel
 from datamodel import DataModel
-from matplotlib.figure import Figure
-from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg, NavigationToolbar2Tk)
+from timeseries import TimeSeries
 
 from dataset import AggregatedDataSet
 
@@ -30,6 +29,10 @@ class MainWindow(Tk):
         container.grid_rowconfigure(0, weight=1)
         container.grid_columnconfigure(0, weight=1)
 
+        # TODO get scrollbar working to be able to see all graphs
+        vertical_scrollbar = Scrollbar(self)
+        vertical_scrollbar.pack(side='right', fill='y')
+
         menu = Menu(self)
         self.config(menu=menu)
 
@@ -54,6 +57,7 @@ class MainWindow(Tk):
 
     def show_load_data(self):
         form_window = Toplevel(self)
+        form_window.geometry("500x150")
         LoadDataForm(form_window, self.frames[GraphPage], self)
 
     def plot(self, time_axis, ind1, ind2, ind3):
@@ -84,7 +88,7 @@ class GraphPage(Frame):
 
     def load_data(self, filename):  # updates dm, disp
         self.dm.setnewurl(filename)
-        # self.disp.set(self.dm)
+        self.disp.set(self.dm)
 
         # self.controller.plot()  # Creates the graphs when the "OK" button is clicked in Load Data
 
@@ -104,7 +108,7 @@ class LoadDataForm:
 
         # Create an Entry Widget in the Toplevel window
         entry = Entry(top, width=25, textvariable=self.selected_dir)
-        entry.pack()
+        entry.pack(fill='x')
 
         load_button = Button(top, text="Select file...", command=lambda: self.select_file())
         load_button.pack()  # TODO: How to do this side-by-side with the label?
@@ -130,6 +134,7 @@ class LoadDataForm:
         available_dates = [filename for filename in os.listdir(data_dir) if os.path.isdir(data_dir)]
         self.update_option_menu(self.date_om, available_dates, self.on_date_change)
         self.selected_date.set(available_dates[0])
+        self.update_patients(self.selected_date.get())
 
     def on_date_change(self, value):
         self.selected_date.set(value)
@@ -159,22 +164,31 @@ class LoadDataForm:
     def submit(self, data):
         # self.submit_load_action(data.get())
         # change path to work with your computer
-        self.submit_load_action(self.selected_dir.get()+"/"+self.selected_date.get()+"/"+self.selected_patient.get()+"/summary.csv")
+        self.submit_load_action(
+            self.selected_dir.get() + "/" + self.selected_date.get() + "/" + self.selected_patient.get() + "/summary.csv")
         self.show_time_series_builder()
         self.master.destroy()
 
     def show_time_series_builder(self):
-        time_series_window = Toplevel(height='1000', width='1000')
+        time_series_window = Toplevel()
         TimeSeriesBuilder(time_series_window, self.get_column_names(), self.main_window, self.dm)
 
 
 class TimeSeriesBuilder:
     def __init__(self, window, column_names, main_window, dm):
         self.master = window
-        self.column_names = column_names
+        self.invalid_series = 'time'
+        self.column_names = filter(self.filter_callback, column_names)
         self.main_window = main_window
         self.dm = dm
         self.add_widgets()
+
+    def filter_callback(self, name):
+        if (self.invalid_series not in name.lower()):
+            return True
+        else:
+            return False
+
     def add_widgets(self):
         first_frame_vertical = Frame(self.master)
         available_label = Label(first_frame_vertical, text="Available Series", font=SMALL_FONT)
@@ -188,7 +202,7 @@ class TimeSeriesBuilder:
             lb_available.insert(index, series_name)
         lb_available.pack(side='left', anchor='w')
         second_frame_horizontal = Frame(second_frame_vertical)
-        right_arrow_photo = PhotoImage(file='right_arrow.png')
+        right_arrow_photo = PhotoImage(file='images/right_arrow.png')
 
         # store extra reference to photo so gc doesn't clear
         gc_right_label = Label(image=right_arrow_photo)
@@ -197,7 +211,7 @@ class TimeSeriesBuilder:
         right_arrow_button = Button(second_frame_horizontal, height=20, width=40, image=right_arrow_photo,
                                     command=lambda: self.move_selections(lb_available, self.lb_selected))
         right_arrow_button.pack(side='top', anchor='n')
-        left_arrow_photo = PhotoImage(file='left_arrow.png')
+        left_arrow_photo = PhotoImage(file='images/left_arrow.png')
 
         # store extra reference to photo so gc doesn't clear
         gc_left_label = Label(image=left_arrow_photo)
@@ -229,8 +243,18 @@ class TimeSeriesBuilder:
         # ind_3 = self.dm.getcolumnaslist(self.lb_selected.get(2))
         self.main_window.plot(time_axis,self.lb_selected.get(0),self.lb_selected.get(1),self.lb_selected.get(2))  # Creates the graphs when the "OK" button is clicked in Load Data
 
+        selected_time_series_names = []
+        cur_index = 0
+        while cur_index < self.lb_selected.size():
+            selected_time_series_names.append(self.lb_selected.get(cur_index))
+            cur_index += 1
+
+        time_series = TimeSeries(self.main_window, self.dm)
+        time_series.plot_selected_group(selected_time_series_names)
+        self.main_window.time_series = time_series
         self.master.destroy()
 
 
 app = MainWindow()
+app.geometry("1000x1000")
 app.mainloop()
