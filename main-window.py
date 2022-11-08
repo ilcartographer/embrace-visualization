@@ -21,6 +21,7 @@ class MainWindow(Tk):
         self.data_file = None
         self.frames = None
         self.init_window()
+        self.time_series = None
 
     def init_window(self):
         container = Frame(self)
@@ -184,6 +185,12 @@ class TimeSeriesBuilder:
         self.dm = dm
         self.add_widgets()
 
+        if self.main_window.time_series is None:
+            self.time_series = TimeSeries(self.main_window, self.dm)
+            self.main_window.time_series = self.time_series
+        else:
+            self.time_series = main_window.time_series
+
     def filter_callback(self, name):
         if (self.invalid_series not in name.lower()):
             return True
@@ -244,9 +251,8 @@ class TimeSeriesBuilder:
             selected_time_series_names.append(self.lb_selected.get(cur_index))
             cur_index += 1
 
-        time_series = TimeSeries(self.main_window, self.dm)
-        time_series.plot_selected_group(selected_time_series_names)
-        self.main_window.time_series = time_series
+        self.time_series.plot_selected_group(selected_time_series_names)
+
         self.master.destroy()
 
 
