@@ -1,9 +1,11 @@
 import os
 from tkinter import *
 from tkinter import filedialog
-
+import datamodel
 from datamodel import DataModel
 from timeseries import TimeSeries
+
+from dataset import AggregatedDataSet
 
 LARGE_FONT = ("Verdana", 12)
 SMALL_FONT = ("Verdana", 8)
@@ -58,14 +60,32 @@ class MainWindow(Tk):
         form_window.geometry("500x150")
         LoadDataForm(form_window, self.frames[GraphPage], self)
 
+    def plot(self, time_axis, ind1, ind2, ind3):
+        self.frames[GraphPage].plot(time_axis, ind1, ind2, ind3)
+
 
 class GraphPage(Frame):
     def __init__(self, parent, controller):
         Frame.__init__(self, parent)
         self.disp = StringVar()  # still required, currently works as display placeholder,
         self.dm = DataModel(self.disp)  # holds the actual data
-        self.disp.set(self.dm)  # displays dm
         self.controller = controller
+
+        label = Label(self, text="This is the graph page", font=LARGE_FONT)
+
+        label.pack(pady=10, padx=10)
+
+        # Note: Leaving this here for now to mess with different figure settings more efficiently
+        # f = Figure(figsize=(5, 5), dpi=100)
+        # a = f.add_subplot(111)
+        # a.plot([1, 2, 3, 4, 5, 6, 7, 8], [5, 6, 1, 3, 8, 9, 3, 5])
+        #
+        # f.gca().get_xaxis().set_ticks([])
+        # f.gca().get_yaxis().set_ticks([])
+        # canvas = FigureCanvasTkAgg(f, self)
+        # canvas.draw()
+        # canvas.get_tk_widget().pack(side=BOTTOM, fill=BOTH, expand=True)
+
 
     def load_data(self, filename):  # updates dm, disp
         self.dm.setnewurl(filename)
@@ -73,6 +93,10 @@ class GraphPage(Frame):
 
         # self.controller.plot()  # Creates the graphs when the "OK" button is clicked in Load Data
 
+    def plot(self, time_axis, ind1, ind2, ind3):
+        AggregatedDataSet(self, self.dm.getdatasetforfeature(time_axis, ind1)).render()
+        AggregatedDataSet(self, self.dm.getdatasetforfeature(time_axis, ind2)).render()
+        AggregatedDataSet(self, self.dm.getdatasetforfeature(time_axis, ind3)).render()
 
 class LoadDataForm:
     def __init__(self, top, graph_page, main_window):
@@ -214,7 +238,6 @@ class TimeSeriesBuilder:
             lb_origin.delete(option_index)
 
     def finish(self):
-
         selected_time_series_names = []
         cur_index = 0
         while cur_index < self.lb_selected.size():
