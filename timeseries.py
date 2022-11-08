@@ -30,7 +30,6 @@ class TimeSeries:
             self.add_plot(0, name)
 
     def remove_all_plots(self):
-        # TODO get this method to work correctly. It is not deleting the canvases currently
         for plot in self.canvases:
             plot[0]["canvas"].get_tk_widget().destroy()
 
