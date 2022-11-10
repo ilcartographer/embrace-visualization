@@ -1,6 +1,7 @@
 from tkinter import *
 from tkinter import *
 
+from RangeSlider import RangeSliderH
 from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg)
 from matplotlib.figure import Figure
 
@@ -15,6 +16,7 @@ class TimeSeries:
         self.parent = parent
         self.dm = dm
         self.canvases = []
+        self.rs1 = None
 
     def add_plot(self, time, feature):
         self.canvases.append([
@@ -24,6 +26,16 @@ class TimeSeries:
             }])
 
     def plot_selected_group(self, selected_time_series_names):
+        if self.rs1 is not None:
+            self.rs1.pack_forget()
+
+        min_time = DoubleVar()  # left handle variable
+        max_time = DoubleVar()  # right handle variable
+
+        # TODO: min/max value needs to come from dataset
+        self.rs1 = RangeSliderH(self.parent, [min_time, max_time], padX=12, min_val=20, max_val=50, digit_precision='.0f')  # horizontal
+        self.rs1.pack()  # or grid or place method could be used
+
         self.remove_all_plots()
 
         for name in selected_time_series_names:

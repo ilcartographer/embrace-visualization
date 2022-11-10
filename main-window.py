@@ -1,11 +1,9 @@
 import os
 from tkinter import *
 from tkinter import filedialog
-import datamodel
+
 from datamodel import DataModel
 from timeseries import TimeSeries
-
-from dataset import AggregatedDataSet
 
 LARGE_FONT = ("Verdana", 12)
 SMALL_FONT = ("Verdana", 8)
@@ -61,9 +59,6 @@ class MainWindow(Tk):
         form_window.geometry("500x150")
         LoadDataForm(form_window, self.frames[GraphPage], self)
 
-    def plot(self, time_axis, ind1, ind2, ind3):
-        self.frames[GraphPage].plot(time_axis, ind1, ind2, ind3)
-
 
 class GraphPage(Frame):
     def __init__(self, parent, controller):
@@ -87,17 +82,12 @@ class GraphPage(Frame):
         # canvas.draw()
         # canvas.get_tk_widget().pack(side=BOTTOM, fill=BOTH, expand=True)
 
-
     def load_data(self, filename):  # updates dm, disp
         self.dm.setnewurl(filename)
         self.disp.set(self.dm)
 
         # self.controller.plot()  # Creates the graphs when the "OK" button is clicked in Load Data
 
-    def plot(self, time_axis, ind1, ind2, ind3):
-        AggregatedDataSet(self, self.dm.getdatasetforfeature(time_axis, ind1)).render()
-        AggregatedDataSet(self, self.dm.getdatasetforfeature(time_axis, ind2)).render()
-        AggregatedDataSet(self, self.dm.getdatasetforfeature(time_axis, ind3)).render()
 
 class LoadDataForm:
     def __init__(self, top, graph_page, main_window):
