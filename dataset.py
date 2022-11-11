@@ -23,9 +23,10 @@ class DataSet:
 
 
 class AggregatedDataSet:
-    def __init__(self, master, dataset):
+    def __init__(self, master, dataset, order):
         self.master = master
         self.dataset = dataset
+        self.order = order
 
     def render(self):
         # def slave_plot(self, time, ind):
@@ -47,6 +48,6 @@ class AggregatedDataSet:
         # creating the Tkinter canvas which houses the graphs
         canvas = FigureCanvasTkAgg(figure, self.master)
         canvas.draw()
-        canvas.get_tk_widget().pack(side=BOTTOM, fill=BOTH, expand=True)
+        canvas.get_tk_widget().grid(row=self.order, column=0)
 
         return canvas
