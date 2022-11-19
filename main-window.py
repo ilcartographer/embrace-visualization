@@ -19,7 +19,6 @@ class MainWindow(Tk):
         self.data_file = None
         self.frames = None
         self.init_window()
-        self.time_series = None
 
     def init_window(self):
         container = Frame(self)
@@ -27,10 +26,6 @@ class MainWindow(Tk):
 
         container.grid_rowconfigure(0, weight=1)
         container.grid_columnconfigure(0, weight=1)
-
-        # TODO get scrollbar working to be able to see all graphs
-        vertical_scrollbar = Scrollbar(self)
-        vertical_scrollbar.pack(side='right', fill='y')
 
         menu = Menu(self)
         self.config(menu=menu)
@@ -66,10 +61,53 @@ class GraphPage(Frame):
         self.disp = StringVar()  # still required, currently works as display placeholder,
         self.dm = DataModel(self.disp)  # holds the actual data
         self.controller = controller
+        self.time_series = None
 
-        label = Label(self, text="This is the graph page", font=LARGE_FONT)
+        ###############
+        # The following section sets up the scrollable frame. Based on the solution from
+        # https://stackoverflow.com/questions/16188420/tkinter-scrollbar-for-frame/16198198#16198198
+        # TODO: As in the example, maybe make a ScrollableFrame class and have GraphPage extend it?
+        # Create a canvas object and a vertical scrollbar for scrolling it.
+        vscrollbar = Scrollbar(self, orient=VERTICAL)
+        vscrollbar.pack(fill=Y, side=RIGHT, expand=FALSE)
+        canvas = Canvas(self, bd=0, highlightthickness=0,
+                        yscrollcommand=vscrollbar.set)
+        canvas.pack(side=LEFT, fill=BOTH, expand=TRUE)
+        vscrollbar.config(command=canvas.yview)
 
-        label.pack(pady=10, padx=10)
+        # Reset the view
+        canvas.xview_moveto(0)
+        canvas.yview_moveto(0)
+
+        # Create a frame inside the canvas which will be scrolled with it.
+        self.interior = interior = Frame(canvas)
+        interior_id = canvas.create_window(0, 0, window=interior,
+                                           anchor=NW)
+
+        # Track changes to the canvas and frame width and sync them,
+        # also updating the scrollbar.
+        def _configure_interior(event):
+            # Update the scrollbars to match the size of the inner frame.
+            size = (interior.winfo_reqwidth(), interior.winfo_reqheight())
+            canvas.config(scrollregion="0 0 %s %s" % size)
+            if interior.winfo_reqwidth() != canvas.winfo_width():
+                # Update the canvas's width to fit the inner frame.
+                canvas.config(width=interior.winfo_reqwidth())
+
+        interior.bind('<Configure>', _configure_interior)
+
+        def _configure_canvas(event):
+            if interior.winfo_reqwidth() != canvas.winfo_width():
+                # Update the inner frame's width to fill the canvas.
+                canvas.itemconfigure(interior_id, width=canvas.winfo_width())
+
+        canvas.bind('<Configure>', _configure_canvas)
+
+        ###############
+
+        label = Label(interior, text="This is the graph page", font=LARGE_FONT)
+
+        label.grid(row=0, column=0, sticky="ew")
 
         # Note: Leaving this here for now to mess with different figure settings more efficiently
         # f = Figure(figsize=(5, 5), dpi=100)
@@ -94,7 +132,7 @@ class LoadDataForm:
         self.master = top
         self.submit_load_action = graph_page.load_data
         self.get_column_names = graph_page.dm.getcolumnnameslist
-        self.main_window = main_window
+        self.graph_page = graph_page
         self.dm = graph_page.dm
         self.selected_dir = StringVar()
 
@@ -163,24 +201,23 @@ class LoadDataForm:
 
     def show_time_series_builder(self):
         time_series_window = Toplevel()
-        TimeSeriesBuilder(time_series_window, self.get_column_names(), self.main_window, self.dm)
+        TimeSeriesBuilder(time_series_window, self.get_column_names(), self.graph_page, self.dm)
 
 
 class TimeSeriesBuilder:
-    def __init__(self, window, column_names, main_window, dm):
-        self.lb_selected = None
+    def __init__(self, window, column_names, graph_page, dm):
         self.master = window
         self.invalid_series = 'time'
         self.column_names = filter(self.filter_callback, column_names)
-        self.main_window = main_window
+        self.graph_page = graph_page
         self.dm = dm
         self.add_widgets()
 
-        if self.main_window.time_series is None:
-            self.time_series = TimeSeries(self.main_window, self.dm)
-            self.main_window.time_series = self.time_series
+        if self.graph_page.time_series is None:
+            self.time_series = TimeSeries(self.graph_page.interior, self.dm)
+            self.graph_page.time_series = self.time_series
         else:
-            self.time_series = main_window.time_series
+            self.time_series = graph_page.time_series
 
     def filter_callback(self, name):
         if self.invalid_series not in name.lower():
