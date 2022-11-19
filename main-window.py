@@ -116,7 +116,7 @@ class LoadDataForm:
         self.patient_om.pack()
 
         # Create a Button Widget in the Toplevel Window
-        button = Button(top, text="Ok", command=lambda: self.submit(entry))
+        button = Button(top, text="Ok", command=lambda: self.submit())
         button.pack(pady=5, side=TOP)
 
     def select_file(self):
@@ -153,7 +153,7 @@ class LoadDataForm:
             menu.add_command(label=string,
                              command=lambda value=string: callback(value))
 
-    def submit(self, data):
+    def submit(self):
         # self.submit_load_action(data.get())
         # change path to work with your computer
         self.submit_load_action(
@@ -168,6 +168,7 @@ class LoadDataForm:
 
 class TimeSeriesBuilder:
     def __init__(self, window, column_names, main_window, dm):
+        self.lb_selected = None
         self.master = window
         self.invalid_series = 'time'
         self.column_names = filter(self.filter_callback, column_names)
@@ -182,7 +183,7 @@ class TimeSeriesBuilder:
             self.time_series = main_window.time_series
 
     def filter_callback(self, name):
-        if (self.invalid_series not in name.lower()):
+        if self.invalid_series not in name.lower():
             return True
         else:
             return False
@@ -223,7 +224,7 @@ class TimeSeriesBuilder:
         self.lb_selected.pack(side='right', anchor='e')
         second_frame_vertical.pack(fill='x')
         third_frame_vertical = Frame(self.master)
-        finish_button = Button(third_frame_vertical, text="Finish", command=lambda: self.finish())
+        finish_button = Button(third_frame_vertical, text="Finish", command=lambda: self.submit())
         finish_button.pack(side='right')
         third_frame_vertical.pack(fill='x')
 
@@ -234,7 +235,7 @@ class TimeSeriesBuilder:
         for option_index in reversed(lb_origin.curselection()):
             lb_origin.delete(option_index)
 
-    def finish(self):
+    def submit(self):
         selected_time_series_names = []
         cur_index = 0
         while cur_index < self.lb_selected.size():
