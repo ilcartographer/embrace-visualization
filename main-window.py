@@ -214,16 +214,17 @@ class TimeSeriesBuilder:
         self.add_widgets()
 
         if self.graph_page.time_series is None:
-            self.time_series = TimeSeries(self.graph_page.interior, self.dm)
+            self.time_series = TimeSeries(self.graph_page, self.dm)
             self.graph_page.time_series = self.time_series
         else:
             self.time_series = graph_page.time_series
 
     def filter_callback(self, name):
-        if self.invalid_series not in name.lower():
-            return True
-        else:
-            return False
+        # if self.invalid_series not in name.lower():
+        #     return True
+        # else:
+        #     return False
+        return self.invalid_series not in name.lower()
 
     def add_widgets(self):
         first_frame_vertical = Frame(self.master)
@@ -278,10 +279,26 @@ class TimeSeriesBuilder:
         while cur_index < self.lb_selected.size():
             selected_time_series_names.append(self.lb_selected.get(cur_index))
             cur_index += 1
-
-        self.time_series.plot_selected_group(selected_time_series_names)
-
+        self.time_series.set_selected_time_series_names(selected_time_series_names)
+        self.time_series.plot_selected_group(None, None)
+        # self.enable_settings_menu()
         self.master.destroy()
+    
+    # def enable_settings_menu(self):
+    #     settings_menu = Menu(self.graph_page, tearoff=0)
+    #     settings_menu.add_command(label="Aggregate")
+    #     settings_menu.add_command(label="Describe")
+
+    #     self.graph_page.bind_all("<Button-3>", lambda event: self.handle_rightclick(event,menu=settings_menu))
+    
+    # def handle_rightclick(self, e, menu):
+    #     try:
+    #         menu.tk_popup(e.x_root, e.y_root)
+    #     finally:
+    #         menu.grab_release()
+
+
+
 
 
 app = MainWindow()
