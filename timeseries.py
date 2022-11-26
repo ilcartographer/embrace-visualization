@@ -33,7 +33,8 @@ class TimeSeries:
 
     def plot_selected_group(self, interval, metric):
         if self.rs1 is not None:
-            self.rs1.grid_forget()
+            # self.rs1.grid_forget()
+            self.rs1.pack_forget()
         self.interval = interval
         self.metric = metric
 
@@ -42,11 +43,19 @@ class TimeSeries:
 
         # TODO: min/max value needs to come from dataset
         self.rs1 = RangeSliderH(self.parent.interior, [min_time, max_time], padX=12, min_val=20, max_val=50, digit_precision='.0f')  # horizontal
-        self.rs1.grid(row=1, column=0)  # or grid or place method could be used
+        # self.rs1.grid(row=1, column=0)  # or grid or place method could be used
+        self.rs1.pack()  
 
         self.remove_all_plots()
 
-        counter = 1
+        if self.interval is None and self.metric is None:
+            self.parent.interval_setting_label.config(text = 'Interval: None')
+            self.parent.metric_setting_label.config(text = 'Metric: None')
+        else:
+            self.parent.interval_setting_label.config(text = 'Interval: ' + AggregatedDataSet.get_interval_string(self.interval))
+            self.parent.metric_setting_label.config(text = 'Metric: ' + self.metric.name)
+            
+        counter = 2
 
         for name in self.selected_time_series_names:
             counter += 1

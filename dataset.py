@@ -48,8 +48,7 @@ class AggregatedDataSet:
         self.master = master
         self.dataset = dataset
         self.order = order
-        self.aggregationSettings = self.assign_aggregation_settings(interval, metric)
-        # lambda i = interval,  m = metric: AggregationSettings(i,m)
+        self.aggregationSettings = AggregationSettings(interval, metric)
 
     def render(self):
         # def slave_plot(self, time, ind):
@@ -67,7 +66,7 @@ class AggregatedDataSet:
         df = pd.DataFrame(data = d)
         if self.aggregationSettings.interval is not None and self.aggregationSettings.metric is not None:
             df['Datetime (UTC)'] = pd.to_datetime(df['Datetime (UTC)'])
-            interval_rule = self.get_interval_string(self.aggregationSettings.interval.name).replace(" ", "")
+            interval_rule = self.get_interval_string(self.aggregationSettings.interval).replace(" ", "")
             df_resampled= df.resample(rule = interval_rule, on='Datetime (UTC)')
             df_resampled_metric = self.match_metric(df_resampled, self.aggregationSettings.metric.name)
             df_resampled_metric.plot(ax=plot)
@@ -82,7 +81,8 @@ class AggregatedDataSet:
         # creating the Tkinter canvas which houses the graphs
         canvas = FigureCanvasTkAgg(figure, self.master.interior)
         canvas.draw()
-        canvas.get_tk_widget().grid(row=self.order, column=0)
+        # canvas.get_tk_widget().grid(row=self.order, column=0)
+        canvas.get_tk_widget().pack()
         self.enable_settings_menu(canvas)
         return canvas
 
@@ -94,7 +94,7 @@ class AggregatedDataSet:
         for variant in iter(Interval):
             variant_name = Enum.__getattribute__(Interval, variant.name)
             interval_sub_menu.add_command(
-                label = self.get_interval_string(variant.name), 
+                label = self.get_interval_string(variant), 
                 command=lambda name=variant_name: self.update_agg_settings("interval", name)
             )
 
@@ -127,9 +127,10 @@ class AggregatedDataSet:
             menu.tk_popup(e.x_root, e.y_root)
         finally:
             menu.grab_release()
-    
-    def get_interval_string(self, variant):
-        match variant:
+
+    @staticmethod
+    def get_interval_string(variant):
+        match variant.name:
             case "ONE_MINUTE": 
                 return "1 min"
             case "THIRTY_MINUTES": 
@@ -162,20 +163,15 @@ class AggregatedDataSet:
 
     def update_agg_settings(self, setting_type, setting_value):
             if setting_type == "interval":
-                self.master.time_series.plot_selected_group(setting_value, self.aggregationSettings.metric)
+                metric_setting = Metric.MIN
+                if self.aggregationSettings.metric is not None:
+                    metric_setting = self.aggregationSettings.metric
+                self.master.time_series.plot_selected_group(setting_value, metric_setting)
             elif setting_type == "metric":
-                self.master.time_series.plot_selected_group(self.aggregationSettings.interval, setting_value)
-
-    def assign_aggregation_settings(self, interval, metric):
-        if interval is not None and metric is not None:
-            return AggregationSettings(interval, metric)
-        elif interval is not None and metric is None:
-            return AggregationSettings(interval, Metric.AVG)
-        elif interval is None and metric is not None:
-            return AggregationSettings(Interval.ONE_MINUTE, metric)
-        else:
-            return AggregationSettings(None, None)
-
+                interval_setting = Interval.ONE_MINUTE
+                if self.aggregationSettings.interval is not None:
+                    interval_setting = self.aggregationSettings.interval
+                self.master.time_series.plot_selected_group(interval_setting, setting_value)
 
 class AggregationSettings:
     def __init__(self, interval, metric):
