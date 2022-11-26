@@ -16,7 +16,6 @@ def client_exit():
 class MainWindow(Tk):
     def __init__(self):
         super().__init__()
-        self.data_file = None
         self.frames = None
         self.init_window()
 
@@ -38,7 +37,7 @@ class MainWindow(Tk):
 
         self.frames = {}
 
-        frame = GraphPage(container, self)
+        frame = GraphPage(container)
         self.frames[GraphPage] = frame
 
         frame.grid(row=0, column=0, sticky="nsew")
@@ -52,15 +51,14 @@ class MainWindow(Tk):
     def show_load_data(self):
         form_window = Toplevel(self)
         form_window.geometry("500x150")
-        LoadDataForm(form_window, self.frames[GraphPage], self)
+        LoadDataForm(form_window, self.frames[GraphPage])
 
 
 class GraphPage(Frame):
-    def __init__(self, parent, controller):
+    def __init__(self, parent):
         Frame.__init__(self, parent)
         self.disp = StringVar()  # still required, currently works as display placeholder,
         self.dm = DataModel(self.disp)  # holds the actual data
-        self.controller = controller
         self.time_series = None
 
         ###############
@@ -128,7 +126,7 @@ class GraphPage(Frame):
 
 
 class LoadDataForm:
-    def __init__(self, top, graph_page, main_window):
+    def __init__(self, top, graph_page):
         self.master = top
         self.submit_load_action = graph_page.load_data
         self.get_column_names = graph_page.dm.getcolumnnameslist
