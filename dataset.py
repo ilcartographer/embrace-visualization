@@ -69,7 +69,7 @@ class AggregatedDataSet:
         if self.aggregationSettings.interval is not None and self.aggregationSettings.metric is not None:
             df['Datetime (UTC)'] = pd.to_datetime(df['Datetime (UTC)'])
             interval_rule = self.get_interval_string(self.aggregationSettings.interval.name).replace(" ", "")
-            df_resampled= df.resample(rule = interval_rule, on='Datetime (UTC)').sum()
+            df_resampled= df.resample(rule = interval_rule, on='Datetime (UTC)')
             df_resampled_metric = self.match_metric(df_resampled, self.aggregationSettings.metric.name)
             df_resampled_metric.plot(ax=plot)
         else: 
