@@ -104,10 +104,15 @@ class GraphPage(Frame):
         canvas.bind('<Configure>', _configure_canvas)
 
         ###############
+        top_frame = Frame(interior)
 
-        label = Label(interior, text="This is the graph page", font=LARGE_FONT)
+        label = Label(top_frame, text="This is the graph page", font=LARGE_FONT)
+        label.pack(side='left')
+        self.reset_agg_setting_button = Button(top_frame, text="Reset", command=lambda: self.time_series.plot_selected_group(None, None))
+        self.metric_setting_label = Label(top_frame, text='Metric: None', font=SMALL_FONT)
 
-        label.grid(row=0, column=0, sticky="ew")
+        self.interval_setting_label = Label(top_frame, text='Interval: None', font=SMALL_FONT)
+        top_frame.pack(fill='x')
 
         # Note: Leaving this here for now to mess with different figure settings more efficiently
         # f = Figure(figsize=(5, 5), dpi=100)
@@ -214,16 +219,13 @@ class TimeSeriesBuilder:
         self.add_widgets()
 
         if self.graph_page.time_series is None:
-            self.time_series = TimeSeries(self.graph_page.interior, self.dm)
+            self.time_series = TimeSeries(self.graph_page, self.dm)
             self.graph_page.time_series = self.time_series
         else:
             self.time_series = graph_page.time_series
 
     def filter_callback(self, name):
-        if self.invalid_series not in name.lower():
-            return True
-        else:
-            return False
+        return self.invalid_series not in name.lower()
 
     def add_widgets(self):
         first_frame_vertical = Frame(self.master)
@@ -278,11 +280,14 @@ class TimeSeriesBuilder:
         while cur_index < self.lb_selected.size():
             selected_time_series_names.append(self.lb_selected.get(cur_index))
             cur_index += 1
-
-        self.time_series.plot_selected_group(selected_time_series_names)
+        self.time_series.set_selected_time_series_names(selected_time_series_names)
+        self.time_series.plot_selected_group(None, None)
+        
+        self.graph_page.reset_agg_setting_button.pack(side='right')
+        self.graph_page.metric_setting_label.pack(side='right')
+        self.graph_page.interval_setting_label.pack(side='right')
 
         self.master.destroy()
-
 
 app = MainWindow()
 app.geometry("1000x1000")
