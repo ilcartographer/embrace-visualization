@@ -220,10 +220,6 @@ class TimeSeriesBuilder:
             self.time_series = graph_page.time_series
 
     def filter_callback(self, name):
-        # if self.invalid_series not in name.lower():
-        #     return True
-        # else:
-        #     return False
         return self.invalid_series not in name.lower()
 
     def add_widgets(self):
