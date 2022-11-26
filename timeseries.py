@@ -1,7 +1,7 @@
 from tkinter import *
 from tkinter import *
 
-from RangeSlider.RangeSlider import RangeSliderH
+from RangeSlider import RangeSliderH
 from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg)
 from matplotlib.figure import Figure
 

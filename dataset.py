@@ -65,7 +65,6 @@ class AggregatedDataSet:
 
         d = {'Datetime (UTC)': points_x, self.dataset.label: points_y}
         df = pd.DataFrame(data = d)
-        print(self.aggregationSettings.interval)
         if self.aggregationSettings.interval is not None and self.aggregationSettings.metric is not None:
             df['Datetime (UTC)'] = pd.to_datetime(df['Datetime (UTC)'])
             interval_rule = self.get_interval_string(self.aggregationSettings.interval.name).replace(" ", "")
@@ -154,6 +153,8 @@ class AggregatedDataSet:
                 return df.mean()
             case "SUM": 
                 return df.sum()
+            case "MEDIAN":
+                return df.median()
             case "VARIANCE": 
                 return df.var()
             case "STD": 
@@ -161,15 +162,8 @@ class AggregatedDataSet:
 
     def update_agg_settings(self, setting_type, setting_value):
             if setting_type == "interval":
-                # print(setting_type)
-                # print(setting_value)
-                # print(self.dataset.label)
-                # print(self.master.time_series)
                 self.master.time_series.plot_selected_group(setting_value, self.aggregationSettings.metric)
             elif setting_type == "metric":
-                # print(setting_type)
-                # print(setting_value)
-                # print(self.dataset.label)
                 self.master.time_series.plot_selected_group(self.aggregationSettings.interval, setting_value)
 
     def assign_aggregation_settings(self, interval, metric):
