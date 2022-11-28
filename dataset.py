@@ -1,6 +1,9 @@
 from tkinter import Menu
 from enum import Enum
 import pandas as pd
+import numpy as np
+
+from datetime import datetime
 
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
@@ -35,6 +38,12 @@ class DataSet:
         self.points = points
         self.label = label
 
+    def getxvalues(self):
+        return [point.x for point in self.points]
+
+    def getyvalues(self):
+        return [point.y for point in self.points]
+
 
 class AggregatedDataSet:
     def __init__(self, master, dataset, order, interval, metric, minx, maxx):
@@ -50,12 +59,11 @@ class AggregatedDataSet:
         self.maxx = maxx
 
     def render(self):
-        # def slave_plot(self, time, ind):
-        # points_x = self.dataset.getxvalues()
-        # points_y = self.dataset.getyvalues()
-        filtered_points = [point for point in self.dataset.points if (point.x >= self.minx) & (point.x <= self.maxx)]
-        points_x = [point.x for point in filtered_points]
-        points_y = [point.y for point in filtered_points]
+        points_x = self.dataset.getxvalues()
+        points_y = self.dataset.getyvalues()
+        # filtered_points = [point for point in self.dataset.points if (point.x >= self.minx) & (point.x <= self.maxx)]
+        # points_x = [point.x for point in filtered_points]
+        # points_y = [point.y for point in filtered_points]
 
         # the figure that will contain the plot
         figure = Figure(figsize=(10, 2.5), dpi=100)
@@ -66,8 +74,15 @@ class AggregatedDataSet:
 
         d = {'Datetime (UTC)': points_x, self.dataset.label: points_y}
         df = pd.DataFrame(data = d)
+        df['Datetime (UTC)'] = pd.to_datetime(df['Datetime (UTC)'], utc=True)
+
+        min_dt = pd.to_datetime(self.minx, unit='ms', utc=True)
+        max_dt = pd.to_datetime(self.maxx, unit='ms', utc=True)
+
+        df = df[(df['Datetime (UTC)'] >= min_dt) & (df['Datetime (UTC)'] <= max_dt)]
+
         if self.aggregationSettings.interval is not None and self.aggregationSettings.metric is not None:
-            df['Datetime (UTC)'] = pd.to_datetime(df['Datetime (UTC)'])
+
             interval_rule = self.get_interval_string(self.aggregationSettings.interval).replace(" ", "")
             df_resampled= df.resample(rule = interval_rule, on='Datetime (UTC)')
             df_resampled_metric = self.match_metric(df_resampled, self.aggregationSettings.metric.name)
