@@ -62,7 +62,7 @@ class TimeSeries:
 
         for name in self.selected_time_series_names:
             counter += 1
-            self.add_plot(2, name, counter)
+            self.add_plot(0, name, counter)
 
     def remove_all_plots(self):
         for plot in self.canvases:
