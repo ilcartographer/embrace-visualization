@@ -25,10 +25,13 @@ class TimeSeries:
         self.selected_time_series_names = value
 
     def add_plot(self, time, feature, order):
+        time_values = self.dm.getcolumnaslist(2)
+        min_value = min(time_values)
+        max_value = max(time_values)
         self.canvases.append([
             {
                 "label": feature,
-                "canvas": AggregatedDataSet(self.parent, self.dm.getdatasetforfeature(time, feature), order, self.interval, self.metric).render()
+                "canvas": AggregatedDataSet(self.parent, self.dm.getdatasetforfeature(time, feature), order, self.interval, self.metric, min_value, max_value).render()
             }])
 
     def plot_selected_group(self, interval, metric):
@@ -59,7 +62,7 @@ class TimeSeries:
 
         for name in self.selected_time_series_names:
             counter += 1
-            self.add_plot(0, name, counter)
+            self.add_plot(2, name, counter)
 
     def remove_all_plots(self):
         for plot in self.canvases:

@@ -1,4 +1,3 @@
-from tkinter import BOTTOM, BOTH
 from tkinter import Menu
 from enum import Enum
 import pandas as pd
@@ -36,24 +35,27 @@ class DataSet:
         self.points = points
         self.label = label
 
-    def getxvalues(self):
-        return [point.x for point in self.points]
-
-    def getyvalues(self):
-        return [point.y for point in self.points]
-
 
 class AggregatedDataSet:
-    def __init__(self, master, dataset, order, interval, metric):
+    def __init__(self, master, dataset, order, interval, metric, minx, maxx):
         self.master = master
         self.dataset = dataset
         self.order = order
         self.aggregationSettings = AggregationSettings(interval, metric)
+        self.minx = minx
+        self.maxx = maxx
+
+    def set_bounds(self, minx, maxx):
+        self.minx = minx
+        self.maxx = maxx
 
     def render(self):
         # def slave_plot(self, time, ind):
-        points_x = self.dataset.getxvalues()
-        points_y = self.dataset.getyvalues()
+        # points_x = self.dataset.getxvalues()
+        # points_y = self.dataset.getyvalues()
+        filtered_points = [point for point in self.dataset.points if (point.x >= self.minx) & (point.x <= self.maxx)]
+        points_x = [point.x for point in filtered_points]
+        points_y = [point.y for point in filtered_points]
 
         # the figure that will contain the plot
         figure = Figure(figsize=(10, 2.5), dpi=100)
