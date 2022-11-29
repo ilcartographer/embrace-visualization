@@ -1,12 +1,10 @@
-from tkinter import Menu
 from enum import Enum
+from tkinter import Menu
+
 import pandas as pd
-import numpy as np
-
-from datetime import datetime
-
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
+
 
 class Interval(Enum):
     ONE_MINUTE = 1
@@ -15,7 +13,7 @@ class Interval(Enum):
     THREE_HOURS = 4
     SIX_HOURS = 5
     ONE_DAY = 6
-    
+
 
 class Metric(Enum):
     MIN = 1
@@ -25,7 +23,7 @@ class Metric(Enum):
     MEDIAN = 5
     VARIANCE = 6
     STD = 7
-    
+
 
 class DataPoint:
     def __init__(self, x, y):
@@ -61,9 +59,6 @@ class AggregatedDataSet:
     def render(self):
         points_x = self.dataset.getxvalues()
         points_y = self.dataset.getyvalues()
-        # filtered_points = [point for point in self.dataset.points if (point.x >= self.minx) & (point.x <= self.maxx)]
-        # points_x = [point.x for point in filtered_points]
-        # points_y = [point.y for point in filtered_points]
 
         # the figure that will contain the plot
         figure = Figure(figsize=(10, 2.5), dpi=100)
@@ -73,7 +68,7 @@ class AggregatedDataSet:
         plot = figure.add_subplot(111)
 
         d = {'Datetime (UTC)': points_x, self.dataset.label: points_y}
-        df = pd.DataFrame(data = d)
+        df = pd.DataFrame(data=d)
         df['Datetime (UTC)'] = pd.to_datetime(df['Datetime (UTC)'], utc=True)
 
         min_dt = pd.to_datetime(self.minx, unit='ms', utc=True)
@@ -82,16 +77,13 @@ class AggregatedDataSet:
         df = df[(df['Datetime (UTC)'] >= min_dt) & (df['Datetime (UTC)'] <= max_dt)]
 
         if self.aggregationSettings.interval is not None and self.aggregationSettings.metric is not None:
-
             interval_rule = self.get_interval_string(self.aggregationSettings.interval).replace(" ", "")
-            df_resampled= df.resample(rule = interval_rule, on='Datetime (UTC)')
+            df_resampled = df.resample(rule=interval_rule, on='Datetime (UTC)')
             df_resampled_metric = self.match_metric(df_resampled, self.aggregationSettings.metric.name)
             df_resampled_metric.plot(ax=plot)
-        else: 
+        else:
             df.plot(x="Datetime (UTC)", ax=plot)
-        # plotting graph 1
-        # plot.plot(points_x, points_y)
-        
+
         # remove the x ticks for now, this is causing huge performance issues
         # TODO: future state, maybe we can add a small number of ticks
         figure.gca().get_xaxis().set_ticks([])
@@ -111,7 +103,7 @@ class AggregatedDataSet:
         for variant in iter(Interval):
             variant_name = Enum.__getattribute__(Interval, variant.name)
             interval_sub_menu.add_command(
-                label = self.get_interval_string(variant), 
+                label=self.get_interval_string(variant),
                 command=lambda name=variant_name: self.update_agg_settings("interval", name)
             )
 
@@ -119,26 +111,26 @@ class AggregatedDataSet:
         for variant in iter(Metric):
             variant_name = Enum.__getattribute__(Metric, variant.name)
             metric_sub_menu.add_command(
-                label = variant.name, 
+                label=variant.name,
                 command=lambda name=variant_name: self.update_agg_settings("metric", name)
             )
 
         agg_sub_menu.add_cascade(
-            label = "Interval",
+            label="Interval",
             menu=interval_sub_menu
         )
         agg_sub_menu.add_cascade(
-            label = "Metric",
-            menu = metric_sub_menu     
+            label="Metric",
+            menu=metric_sub_menu
         )
         settings_menu.add_cascade(
-            label = "Aggregate",
-            menu = agg_sub_menu
+            label="Aggregate",
+            menu=agg_sub_menu
         )
         settings_menu.add_command(label="Describe")
 
-        canvas.get_tk_widget().bind("<Button-3>", lambda event: self.handle_rightclick(event,menu=settings_menu))
-    
+        canvas.get_tk_widget().bind("<Button-3>", lambda event: self.handle_rightclick(event, menu=settings_menu))
+
     def handle_rightclick(self, e, menu):
         try:
             menu.tk_popup(e.x_root, e.y_root)
@@ -148,47 +140,48 @@ class AggregatedDataSet:
     @staticmethod
     def get_interval_string(variant):
         match variant.name:
-            case "ONE_MINUTE": 
+            case "ONE_MINUTE":
                 return "1 min"
-            case "THIRTY_MINUTES": 
+            case "THIRTY_MINUTES":
                 return "30 min"
-            case "ONE_HOUR": 
+            case "ONE_HOUR":
                 return "1 h"
-            case "THREE_HOURS": 
+            case "THREE_HOURS":
                 return "3 h"
-            case "SIX_HOURS": 
+            case "SIX_HOURS":
                 return "6 h"
-            case "ONE_DAY": 
+            case "ONE_DAY":
                 return "1 d"
 
     def match_metric(self, df, variant):
         match variant:
-            case "MIN": 
+            case "MIN":
                 return df.min()
-            case "MAX": 
+            case "MAX":
                 return df.max()
-            case "AVG": 
+            case "AVG":
                 return df.mean()
-            case "SUM": 
+            case "SUM":
                 return df.sum()
             case "MEDIAN":
                 return df.median()
-            case "VARIANCE": 
+            case "VARIANCE":
                 return df.var()
-            case "STD": 
+            case "STD":
                 return df.std()
 
     def update_agg_settings(self, setting_type, setting_value):
-            if setting_type == "interval":
-                metric_setting = Metric.MIN
-                if self.aggregationSettings.metric is not None:
-                    metric_setting = self.aggregationSettings.metric
-                self.master.time_series.plot_selected_group(setting_value, metric_setting)
-            elif setting_type == "metric":
-                interval_setting = Interval.ONE_MINUTE
-                if self.aggregationSettings.interval is not None:
-                    interval_setting = self.aggregationSettings.interval
-                self.master.time_series.plot_selected_group(interval_setting, setting_value)
+        if setting_type == "interval":
+            metric_setting = Metric.MIN
+            if self.aggregationSettings.metric is not None:
+                metric_setting = self.aggregationSettings.metric
+            self.master.time_series.plot_selected_group(setting_value, metric_setting)
+        elif setting_type == "metric":
+            interval_setting = Interval.ONE_MINUTE
+            if self.aggregationSettings.interval is not None:
+                interval_setting = self.aggregationSettings.interval
+            self.master.time_series.plot_selected_group(interval_setting, setting_value)
+
 
 class AggregationSettings:
     def __init__(self, interval, metric):
