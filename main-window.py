@@ -106,13 +106,14 @@ class GraphPage(Frame):
         ###############
         top_frame = Frame(interior)
 
-        label = Label(top_frame, text="This is the graph page", font=LARGE_FONT)
-        label.pack(side='left')
-        self.reset_agg_setting_button = Button(top_frame, text="Reset", command=lambda: self.time_series.plot_selected_group(None, None))
+        # label = Label(top_frame, text="This is the graph page", font=LARGE_FONT)
+        # label.pack(side='left')
+        self.reset_agg_setting_button = Button(top_frame, text="Reset",
+                                               command=lambda: self.time_series.plot_selected_group(None, None))
         self.metric_setting_label = Label(top_frame, text='Metric: None', font=SMALL_FONT)
 
         self.interval_setting_label = Label(top_frame, text='Interval: None', font=SMALL_FONT)
-        top_frame.pack(fill='x')
+        top_frame.grid(row=0, column=0, columnspan=3, sticky='e', padx=20)
 
         # Note: Leaving this here for now to mess with different figure settings more efficiently
         # f = Figure(figsize=(5, 5), dpi=100)
@@ -282,12 +283,17 @@ class TimeSeriesBuilder:
             cur_index += 1
         self.time_series.set_selected_time_series_names(selected_time_series_names)
         self.time_series.plot_selected_group(None, None)
-        
+
         self.graph_page.reset_agg_setting_button.pack(side='right')
         self.graph_page.metric_setting_label.pack(side='right')
         self.graph_page.interval_setting_label.pack(side='right')
 
+        # self.graph_page.reset_agg_setting_button.grid(row=0, column=1)
+        # self.graph_page.metric_setting_label.grid(row=0, column=2)
+        # self.graph_page.interval_setting_label.grid(row=0, column=3)
+
         self.master.destroy()
+
 
 app = MainWindow()
 app.geometry("1000x1000")
