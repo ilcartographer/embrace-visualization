@@ -1,11 +1,8 @@
-from tkinter import *
+from datetime import datetime
 from tkinter import *
 
 from RangeSlider import RangeSliderH
-from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg)
-from matplotlib.figure import Figure
 
-from datetime import datetime
 from dataset import AggregatedDataSet
 
 LARGE_FONT = ("Verdana", 12)
@@ -40,7 +37,6 @@ class TimeSeries:
         update_btn = Button(self.parent.interior, text="Update graphs", command=lambda: self.zoom_plots())
         update_btn.grid(row=2, column=1)
         # update_btn.pack()
-
 
     def update_labels(self, *args):
         # TODO: Can do if/else for UTC/local time here. fromtimestamp() will do local, utcfromtimestamp() will do UTC.
