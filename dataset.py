@@ -98,8 +98,8 @@ class AggregatedDataSet:
         # creating the Tkinter canvas which houses the graphs
         canvas = FigureCanvasTkAgg(figure, self.master.interior)
         canvas.draw()
-        # canvas.get_tk_widget().grid(row=self.order, column=0)
-        canvas.get_tk_widget().pack()
+        canvas.get_tk_widget().grid(row=self.order, column=0, columnspan=3)
+        # canvas.get_tk_widget().pack()
         self.enable_settings_menu(canvas)
         return canvas
 
