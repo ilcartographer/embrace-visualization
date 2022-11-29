@@ -88,7 +88,7 @@ class AggregatedDataSet:
             df_resampled_metric = self.match_metric(df_resampled, self.aggregationSettings.metric.name)
             df_resampled_metric.plot(ax=plot)
         else: 
-            df.plot(ax=plot)
+            df.plot(x="Datetime (UTC)", ax=plot)
         # plotting graph 1
         # plot.plot(points_x, points_y)
         
