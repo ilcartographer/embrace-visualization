@@ -7,7 +7,8 @@ from matplotlib.figure import Figure
 
 
 class Interval(Enum):
-    ONE_MINUTE = 1
+    # ONE_MINUTE = 1
+    TWO_MINUTES = 1
     THIRTY_MINUTES = 2
     ONE_HOUR = 3
     THREE_HOURS = 4
@@ -140,8 +141,10 @@ class AggregatedDataSet:
     @staticmethod
     def get_interval_string(variant):
         match variant.name:
-            case "ONE_MINUTE":
-                return "1 min"
+            # case "ONE_MINUTE":
+            #     return "1 min"
+            case "TWO_MINUTES":
+                return "2 min"
             case "THIRTY_MINUTES":
                 return "30 min"
             case "ONE_HOUR":
@@ -166,9 +169,9 @@ class AggregatedDataSet:
             case "MEDIAN":
                 return df.median()
             case "VARIANCE":
-                return df.var()
+                return df.var(ddof=0)
             case "STD":
-                return df.std()
+                return df.std(ddof=0)
 
     def update_agg_settings(self, setting_type, setting_value):
         if setting_type == "interval":
@@ -177,7 +180,8 @@ class AggregatedDataSet:
                 metric_setting = self.aggregationSettings.metric
             self.master.time_series.plot_selected_group(setting_value, metric_setting)
         elif setting_type == "metric":
-            interval_setting = Interval.ONE_MINUTE
+            # interval_setting = Interval.ONE_MINUTE
+            interval_setting = Interval.TWO_MINUTES
             if self.aggregationSettings.interval is not None:
                 interval_setting = self.aggregationSettings.interval
             self.master.time_series.plot_selected_group(interval_setting, setting_value)
