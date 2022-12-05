@@ -159,9 +159,9 @@ class AggregatedDataSet:
     def match_metric(self, df, variant):
         match variant:
             case "MIN":
-                return df.min()
+                return df[self.dataset.label].min()
             case "MAX":
-                return df.max()
+                return df[self.dataset.label].max()
             case "AVG":
                 return df.mean()
             case "SUM":
