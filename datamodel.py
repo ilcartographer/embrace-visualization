@@ -54,6 +54,7 @@ class DataModel:
         if type(select) is str:
             tempindex = self.getcolumnindex(select)
         temp = self.getdatacolumn(tempindex)
+
         return temp.values.tolist()
 
     def getcolumnindex(self, name):  # returns numerical index of named column
@@ -70,5 +71,17 @@ class DataModel:
 
     def getdatasetforfeature(self, time, feature):
         # Create list of data points for the given
-        datapoints = list(map(lambda x, y: DataPoint(x, y), self.getcolumnaslist(time), self.getcolumnaslist(feature)))
+        y_data = self.getcolumnaslist(feature)
+        
+        def on_wrist_converter_callback(val):
+            if val:
+                return 1
+            else:
+                return 0
+                
+        if feature == "On Wrist":
+            y_data = map(on_wrist_converter_callback, y_data)
+
+        datapoints = list(map(lambda x, y: DataPoint(x, y), self.getcolumnaslist(time), y_data))
         return DataSet(feature, datapoints)
+
