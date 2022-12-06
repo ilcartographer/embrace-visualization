@@ -45,6 +45,18 @@ class DataSet:
         return [point.y for point in self.points]
 
 
+def listtodatetime(dates, dateortime,):#takes the date or time part of the strings in the array
+    n = len(dates)
+    labellist = ['']*n
+    if dateortime == "date":
+        for i in range(0,n):
+            labellist[i] = (dates[i])[6:10]
+    if dateortime == "time":
+        for i in range(0,n):
+            labellist[i] = (dates[i])[11:19]
+    return labellist
+
+
 class AggregatedDataSet:
     def __init__(self, master, dataset, order, interval, metric, minx, maxx):
         self.master = master
