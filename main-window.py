@@ -143,8 +143,8 @@ class LoadDataForm:
         self.selected_dir = StringVar()
 
         # Create an Entry Widget in the Toplevel window
-        entry = Entry(top, width=25, textvariable=self.selected_dir)
-        entry.pack(fill='x')
+        #entry = Entry(top, width=25, textvariable=self.selected_dir)
+        #entry.pack(fill='x')
 
         load_button = Button(top, text="Select file...", command=lambda: self.select_file())
         load_button.pack()  # TODO: How to do this side-by-side with the label?
