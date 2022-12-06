@@ -17,20 +17,20 @@ will launch a blank window, where the user can use the top menu to open the data
 # Using the Application
 (TODO: Text descriptions needed)
 ## Loading a Dataset
-![](images\usermanual\load_data_menu.png)
+![](images/usermanual/load_data_menu.png)
 
-![](images\usermanual\select_file_filled.png)
+![](images/usermanual/select_file_filled.png)
 ## Selecting Data Series
-![](images\usermanual\series_selector.png)
+![](/images/usermanual/series_selector.png)
 ## Viewing the Data
-![](images\usermanual\graphs_loaded.png)
+![](images/usermanual/graphs_loaded.png)
 ### Getting Graph Values
-![](images\usermanual\data_hover.png)
+![](images/usermanual/data_hover.png)
 ### Zooming In/Out
-![](images\usermanual\graph_zoom.png)
+![](images/usermanual/graph_zoom.png)
 ### Modifying Aggregation Settings
-![](images\usermanual\aggregate_interval.png)
+![](images/usermanual/aggregate_interval.png)
 
-![](images\usermanual\aggregate_metric.png)
+![](images/usermanual/aggregate_metric.png)
 
-![](images\usermanual\data_aggregated.png)
+![](images/usermanual/data_aggregated.png)
