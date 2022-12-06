@@ -2,7 +2,7 @@ import os
 from tkinter import *
 from tkinter import filedialog
 
-from datamodel import DataModel
+from datamodel import *
 from timeseries import TimeSeries
 
 LARGE_FONT = ("Verdana", 12)
@@ -60,6 +60,7 @@ class GraphPage(Frame):
         Frame.__init__(self, parent)
         self.disp = StringVar()  # still required, currently works as display placeholder,
         self.dm = DataModel(self.disp)  # holds the actual data
+        self.metad = Metadata(self.disp)   # holds the metadata information
         self.controller = controller
         self.time_series = None
 
@@ -114,6 +115,10 @@ class GraphPage(Frame):
         self.interval_setting_label = Label(top_frame, text='Interval: None', font=SMALL_FONT)
         top_frame.pack(fill='x')
 
+        def settimezone(df):
+            time_zone = Label(top_frame, text="Time Zone: " + df, font=LARGE_FONT)
+            time_zone.pack(side='top')
+
         # Note: Leaving this here for now to mess with different figure settings more efficiently
         # f = Figure(figsize=(5, 5), dpi=100)
         # a = f.add_subplot(111)
@@ -127,7 +132,11 @@ class GraphPage(Frame):
 
     def load_data(self, filename):  # updates dm, disp
         self.dm.setnewurl(filename)
+        print(filename)
         self.disp.set(self.dm)
+
+        self.metad.setnewurl("metadata.csv")
+        self.GraphPage.settimezone(self.metad.gettimezone())
 
         # self.controller.plot()  # Creates the graphs when the "OK" button is clicked in Load Data
 
