@@ -308,5 +308,5 @@ class TimeSeriesBuilder:
 
 
 app = MainWindow()
-app.geometry("1000x1000")
+app.geometry("800x600")
 app.mainloop()

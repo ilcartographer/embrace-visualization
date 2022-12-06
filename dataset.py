@@ -63,7 +63,7 @@ class AggregatedDataSet:
         points_y = self.dataset.getyvalues()
 
         # the figure that will contain the plot
-        figure = Figure(figsize=(10, 2.5), dpi=100)
+        figure = Figure(figsize=(8, 2.5), dpi=100)
         figure.suptitle(self.dataset.label)
 
         # adding the subplot
