@@ -1,6 +1,8 @@
 import os
+import pandas as pd
 from tkinter import *
 from tkinter import filedialog
+
 
 from datamodel import DataModel
 from timeseries import TimeSeries
@@ -115,6 +117,12 @@ class GraphPage(Frame):
         self.interval_setting_label = Label(top_frame, text='Interval: None', font=SMALL_FONT)
         top_frame.grid(row=0, column=0, columnspan=3, sticky='e', padx=20)
 
+        self.timezone = StringVar()
+        self.timezone.set("Time Zone: NONE")
+
+        time_zone = Label(top_frame, textvariable= self.timezone, font=LARGE_FONT)
+        time_zone.pack(side='top')
+
         # Note: Leaving this here for now to mess with different figure settings more efficiently
         # f = Figure(figsize=(5, 5), dpi=100)
         # a = f.add_subplot(111)
@@ -129,6 +137,10 @@ class GraphPage(Frame):
     def load_data(self, filename):  # updates dm, disp
         self.dm.setnewurl(filename)
         self.disp.set(self.dm)
+
+        self.timezone.set("Time Zone: " + str(self.dm.getcolumnaslist("Timezone (minutes)")[1]))
+        time_zone = Label(textvariable= self.timezone, font=LARGE_FONT)
+        time_zone.pack(side='top')
 
         # self.controller.plot()  # Creates the graphs when the "OK" button is clicked in Load Data
 
