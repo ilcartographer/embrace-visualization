@@ -4,6 +4,7 @@ from tkinter import Menu
 import pandas as pd
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
+from mplcursors import cursor
 
 
 class Interval(Enum):
@@ -77,13 +78,17 @@ class AggregatedDataSet:
 
         df = df[(df['Datetime (UTC)'] >= min_dt) & (df['Datetime (UTC)'] <= max_dt)]
 
+        the_plot = None
+
         if self.aggregationSettings.interval is not None and self.aggregationSettings.metric is not None:
             interval_rule = self.get_interval_string(self.aggregationSettings.interval).replace(" ", "")
             df_resampled = df.resample(rule=interval_rule, on='Datetime (UTC)')
             df_resampled_metric = self.match_metric(df_resampled, self.aggregationSettings.metric.name)
-            df_resampled_metric.plot(ax=plot)
+            the_plot = df_resampled_metric.plot(ax=plot)
         else:
-            df.plot(x="Datetime (UTC)", ax=plot)
+            the_plot = df.plot(x="Datetime (UTC)", ax=plot)
+
+        cursor(the_plot, hover=True)
 
         # remove the x ticks for now, this is causing huge performance issues
         # TODO: future state, maybe we can add a small number of ticks
@@ -94,6 +99,7 @@ class AggregatedDataSet:
         canvas.get_tk_widget().grid(row=self.order, column=0, columnspan=3)
         # canvas.get_tk_widget().pack()
         self.enable_settings_menu(canvas)
+
         return canvas
 
     def enable_settings_menu(self, canvas):
