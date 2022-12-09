@@ -139,8 +139,6 @@ class GraphPage(Frame):
         self.disp.set(self.dm)
 
         self.timezone.set("Time Zone: " + str(self.dm.getcolumnaslist("Timezone (minutes)")[1]))
-        time_zone = Label(textvariable= self.timezone, font=LARGE_FONT)
-        time_zone.pack(side='top')
 
         # self.controller.plot()  # Creates the graphs when the "OK" button is clicked in Load Data
 
