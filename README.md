@@ -80,3 +80,9 @@ popup that will display the summary statistics for the graph data.
 ![](images/usermanual/describe_data.png)
 
 Note: The values in the column on the right are percentiles.
+
+### Changing Time Zone
+To change the time zone from the Local Time Zone recorded in the file and to Universal Coordinated Time (UTC), press the button at the top left of the Main Window. This button will read either `Local` or `UTC`. What timezone the button is currently reading is the timezone the information is currently showing in. You can observe the change in time on the times on either side of the range slider.
+
+![](images/usermanual/time_zone_local.JPG)
+![](images/usermanual/time_zone_UTC.JPG)
