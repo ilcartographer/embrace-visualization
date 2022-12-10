@@ -59,7 +59,7 @@ class TimeSeries:
     def switch_timezones(self):
         self.is_local_time = not self.is_local_time
 
-        self.timezone_label = "Local" if self.is_local_time else "UTC"
+        self.timezone_label.set("Local" if self.is_local_time else "UTC")
 
         self.update_labels()
         self.zoom_plots()
