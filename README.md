@@ -1,4 +1,4 @@
-# embrace-visualization
+# Embrace Visualization
 CSE350/550 Fall 2022, Team 3
 
 # Project Overview
@@ -86,3 +86,13 @@ To change the time zone from the Local Time Zone recorded in the file and to Uni
 
 ![](images/usermanual/time_zone_local.JPG)
 ![](images/usermanual/time_zone_UTC.JPG)
+
+The timezone changes will also be reflected on the tooltip:
+
+![](images/usermanual/time_zone_local_tooltip.png)
+![](images/usermanual/time_zone_UTC_tooltip.png)
+
+The local time that is used will be the local time of the OS running the application.
+
+Note: The timezone in the top-right of the application represents the timezone from the dataset that was loaded. It is
+only a reference, and not functional.
