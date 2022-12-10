@@ -59,7 +59,7 @@ value of the point that the mouse is over.
 To zoom in and out, the handles of the range slider can be dragged to adjust the values. Once the values are selected, 
 click `Update graphs` to redraw the graphs with the selected time range.
 
-![](images/usermanual/graph_zoom.png)
+![](images/usermanual/graph_zoom.JPG)
 
 ### Modifying Aggregation Settings
 To modify the aggregation settings, right-click on any graph and select the desired settings.
