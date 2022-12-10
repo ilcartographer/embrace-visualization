@@ -1,20 +1,22 @@
 from enum import Enum
-from tkinter import Menu
+from tkinter import *
 
 import pandas as pd
+import numpy as np
+import scipy.stats
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 from mplcursors import cursor
 
 
 class Interval(Enum):
-    # ONE_MINUTE = 1
-    TWO_MINUTES = 1
-    THIRTY_MINUTES = 2
-    ONE_HOUR = 3
-    THREE_HOURS = 4
-    SIX_HOURS = 5
-    ONE_DAY = 6
+    ONE_MINUTE = 1
+    TWO_MINUTES = 2
+    THIRTY_MINUTES = 3
+    ONE_HOUR = 4
+    THREE_HOURS = 5
+    SIX_HOURS = 6
+    ONE_DAY = 7
 
 
 class Metric(Enum):
@@ -55,6 +57,8 @@ def listtodatetime(dates, dateortime,):#takes the date or time part of the strin
         for i in range(0,n):
             labellist[i] = (dates[i])[11:19]
     return labellist
+
+#class SummaryStatistics:
 
 
 class AggregatedDataSet:
@@ -146,7 +150,7 @@ class AggregatedDataSet:
             label="Aggregate",
             menu=agg_sub_menu
         )
-        settings_menu.add_command(label="Describe")
+        settings_menu.add_command(label="Describe", command=lambda: self.display_summary())
 
         canvas.get_tk_widget().bind("<Button-3>", lambda event: self.handle_rightclick(event, menu=settings_menu))
 
@@ -156,11 +160,53 @@ class AggregatedDataSet:
         finally:
             menu.grab_release()
 
+    def display_summary(self):
+        points_y = self.dataset.getyvalues()
+        num_array = np.array(points_y)
+        #   kurtosis, skewness
+        stats = {
+            'count': len(points_y),
+            'mean': np.mean(num_array),
+            'std': np.std(num_array),
+            'min': np.amin(num_array),
+            'max': np.amax(num_array),
+            'twoTenths': np.percentile(num_array, .2),
+            'twoFive': np.percentile(num_array, 2.5),
+            'twentyFive': np.percentile(num_array, 25),
+            'fifty': np.percentile(num_array, 50),
+            'seventyFive': np.percentile(num_array, 75),
+            'ninetySevenFive': np.percentile(num_array, 97.5),
+            'ninetyNineNine': np.percentile(num_array, 99.9),
+            'kurtosis': scipy.stats.kurtosis(num_array),
+            'skewness': scipy.stats.skew(num_array)
+        }
+
+        display = Toplevel(self.master)
+        self.build_stats_window(display, stats)
+        print(stats)
+
+    @staticmethod
+    def build_stats_window(window, stats):
+        Label(window, text='Count: {}'.format(stats['count'])).grid(row=0, column=0)
+        Label(window, text='Mean: {}'.format(stats['mean'])).grid(row=1, column=0)
+        Label(window, text='Std: {}'.format(stats['std'])).grid(row=2, column=0)
+        Label(window, text='Min: {}'.format(stats['min'])).grid(row=3, column=0)
+        Label(window, text='Max: {}'.format(stats['max'])).grid(row=4, column=0)
+        Label(window, text='Kurtosis: {}'.format(stats['kurtosis'])).grid(row=5, column=0)
+        Label(window, text='Skewness: {}'.format(stats['skewness'])).grid(row=6, column=0)
+        Label(window, text='.2%: {}'.format(stats['twoTenths'])).grid(row=0, column=1)
+        Label(window, text='2.5%: {}'.format(stats['twoFive'])).grid(row=1, column=1)
+        Label(window, text='25%: {}'.format(stats['twentyFive'])).grid(row=2, column=1)
+        Label(window, text='50%: {}'.format(stats['fifty'])).grid(row=3, column=1)
+        Label(window, text='75%: {}'.format(stats['seventyFive'])).grid(row=4, column=1)
+        Label(window, text='97.5%: {}'.format(stats['ninetySevenFive'])).grid(row=5, column=1)
+        Label(window, text='99.9%: {}'.format(stats['ninetyNineNine'])).grid(row=6, column=1)
+
     @staticmethod
     def get_interval_string(variant):
         match variant.name:
-            # case "ONE_MINUTE":
-            #     return "1 min"
+            case "ONE_MINUTE":
+                return "1 min"
             case "TWO_MINUTES":
                 return "2 min"
             case "THIRTY_MINUTES":

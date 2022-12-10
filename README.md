@@ -32,5 +32,6 @@ will launch a blank window, where the user can use the top menu to open the data
 ![](images/usermanual/aggregate_interval.png)
 
 ![](images/usermanual/aggregate_metric.png)
-
+Note: There is an open issue for standard deviation & variance aggregation with a 1-minute interval. When this 
+combination setting is selected, the graphs appear as a flat line. For other interval settings, they render as expected.
 ![](images/usermanual/data_aggregated.png)

@@ -123,17 +123,6 @@ class GraphPage(Frame):
         time_zone = Label(top_frame, textvariable= self.timezone, font=LARGE_FONT)
         time_zone.pack(side='top')
 
-        # Note: Leaving this here for now to mess with different figure settings more efficiently
-        # f = Figure(figsize=(5, 5), dpi=100)
-        # a = f.add_subplot(111)
-        # a.plot([1, 2, 3, 4, 5, 6, 7, 8], [5, 6, 1, 3, 8, 9, 3, 5])
-        #
-        # f.gca().get_xaxis().set_ticks([])
-        # f.gca().get_yaxis().set_ticks([])
-        # canvas = FigureCanvasTkAgg(f, self)
-        # canvas.draw()
-        # canvas.get_tk_widget().pack(side=BOTTOM, fill=BOTH, expand=True)
-
     def load_data(self, filename):  # updates dm, disp
         self.dm.setnewurl(filename)
         self.disp.set(self.dm)
