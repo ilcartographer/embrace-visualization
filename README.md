@@ -53,7 +53,7 @@ The graph page is scrollable, so the user can scroll up and down to view the gra
 To get the exact values of data points, hover the mouse cursor over a point on the graph. A tooltip will display the
 value of the point that the mouse is over.
 
-![](images/usermanual/data_hover.png)
+![](images/usermanual/data_hover.JPG)
 
 ### Zooming In/Out
 To zoom in and out, the handles of the range slider can be dragged to adjust the values. Once the values are selected, 
