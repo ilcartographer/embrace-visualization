@@ -1,3 +1,4 @@
+import datetime
 from enum import Enum
 from tkinter import *
 
@@ -5,6 +6,7 @@ import pandas as pd
 import numpy as np
 import scipy.stats
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from matplotlib.dates import num2date
 from matplotlib.figure import Figure
 from mplcursors import cursor
 
@@ -47,32 +49,32 @@ class DataSet:
         return [point.y for point in self.points]
 
 
-def listtodatetime(dates, dateortime,):#takes the date or time part of the strings in the array
+def listtodatetime(dates, dateortime, ):  # takes the date or time part of the strings in the array
     n = len(dates)
-    labellist = ['']*n
+    labellist = [''] * n
     if dateortime == "date":
-        for i in range(0,n):
+        for i in range(0, n):
             labellist[i] = (dates[i])[6:10]
     if dateortime == "time":
-        for i in range(0,n):
+        for i in range(0, n):
             labellist[i] = (dates[i])[11:19]
     return labellist
 
-#class SummaryStatistics:
-
 
 class AggregatedDataSet:
-    def __init__(self, master, dataset, order, interval, metric, minx, maxx):
+    def __init__(self, master, dataset, order, interval, metric, minx, maxx, is_local_time):
         self.master = master
         self.dataset = dataset
         self.order = order
         self.aggregationSettings = AggregationSettings(interval, metric)
         self.minx = minx
         self.maxx = maxx
+        self.is_local_time = is_local_time
 
-    def set_bounds(self, minx, maxx):
+    def update_settings(self, minx, maxx, is_local_time):
         self.minx = minx
         self.maxx = maxx
+        self.is_local_time = is_local_time
 
     def render(self):
         points_x = self.dataset.getxvalues()
@@ -104,7 +106,9 @@ class AggregatedDataSet:
         else:
             the_plot = df.plot(x="Datetime (UTC)", ax=plot)
 
-        cursor(the_plot, hover=True)
+        the_cursor = cursor(the_plot, hover=True)
+        the_cursor.connect(
+            "add", lambda sel: self.set_annotation(sel))
 
         # remove the x ticks for now, this is causing huge performance issues
         # TODO: future state, maybe we can add a small number of ticks
@@ -117,6 +121,12 @@ class AggregatedDataSet:
         self.enable_settings_menu(canvas)
 
         return canvas
+
+    def set_annotation(self, sel):
+        date_text = num2date(sel.target[0], datetime.datetime.now(datetime.timezone.utc).astimezone().tzinfo) if \
+            self.is_local_time is True else num2date(sel.target[0])
+        text = "x: {}\ny: {}".format(date_text, sel.target[1])
+        sel.annotation.set_text(text)
 
     def enable_settings_menu(self, canvas):
         settings_menu = Menu(self.master.interior, tearoff=0)
@@ -163,7 +173,6 @@ class AggregatedDataSet:
     def display_summary(self):
         points_y = self.dataset.getyvalues()
         num_array = np.array(points_y)
-        #   kurtosis, skewness
         stats = {
             'count': len(points_y),
             'mean': np.mean(num_array),

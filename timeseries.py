@@ -38,13 +38,31 @@ class TimeSeries:
         update_btn.grid(row=2, column=1)
         # update_btn.pack()
 
+        self.is_local_time = True
+        self.timezone_label = StringVar()
+        self.timezone_label.set("Local")
+        timezone_btn = Button(self.parent.interior, textvariable=self.timezone_label,
+                              command=lambda: self.switch_timezones())
+        timezone_btn.grid(row=0, column=0)
+
     def update_labels(self, *args):
-        # TODO: Can do if/else for UTC/local time here. fromtimestamp() will do local, utcfromtimestamp() will do UTC.
-        start_datetime = datetime.fromtimestamp(int(self.start_time.get()) / 1000).replace(microsecond=0)
-        end_datetime = datetime.fromtimestamp(int(self.end_time.get()) / 1000).replace(microsecond=0)
+        start_datetime = datetime.fromtimestamp(int(self.start_time.get()) / 1000).replace(microsecond=0) \
+            if self.is_local_time \
+            else datetime.utcfromtimestamp(int(self.start_time.get()) / 1000).replace(microsecond=0)
+        end_datetime = datetime.fromtimestamp(int(self.end_time.get()) / 1000).replace(microsecond=0) \
+            if self.is_local_time \
+            else datetime.utcfromtimestamp(int(self.end_time.get()) / 1000).replace(microsecond=0)
 
         self.start_time_str.set(str(start_datetime))
         self.end_time_str.set(str(end_datetime))
+
+    def switch_timezones(self):
+        self.is_local_time = not self.is_local_time
+
+        self.timezone_label = "Local" if self.is_local_time else "UTC"
+
+        self.update_labels()
+        self.zoom_plots()
 
     def set_selected_time_series_names(self, value):
         self.selected_time_series_names = value
@@ -56,7 +74,7 @@ class TimeSeries:
 
         data_set = AggregatedDataSet(self.parent, self.dm.getdatasetforfeature(time, feature), order, self.interval,
                                      self.metric,
-                                     min_value, max_value)
+                                     min_value, max_value, self.is_local_time)
 
         self.add_plot_from_data_set(data_set)
 
@@ -73,7 +91,7 @@ class TimeSeries:
         self.remove_all_plots()
 
         for ds in data_sets:
-            ds.set_bounds(self.start_time.get(), self.end_time.get())
+            ds.update_settings(self.start_time.get(), self.end_time.get(), self.is_local_time)
             self.add_plot_from_data_set(ds)
 
     def plot_selected_group(self, interval, metric):
