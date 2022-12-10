@@ -187,20 +187,20 @@ class AggregatedDataSet:
 
     @staticmethod
     def build_stats_window(window, stats):
-        Label(window, text='Count: {}'.format(stats['count'])).grid(row=0, column=0)
-        Label(window, text='Mean: {}'.format(stats['mean'])).grid(row=1, column=0)
-        Label(window, text='Std: {}'.format(stats['std'])).grid(row=2, column=0)
-        Label(window, text='Min: {}'.format(stats['min'])).grid(row=3, column=0)
-        Label(window, text='Max: {}'.format(stats['max'])).grid(row=4, column=0)
-        Label(window, text='Kurtosis: {}'.format(stats['kurtosis'])).grid(row=5, column=0)
-        Label(window, text='Skewness: {}'.format(stats['skewness'])).grid(row=6, column=0)
-        Label(window, text='.2%: {}'.format(stats['twoTenths'])).grid(row=0, column=1)
-        Label(window, text='2.5%: {}'.format(stats['twoFive'])).grid(row=1, column=1)
-        Label(window, text='25%: {}'.format(stats['twentyFive'])).grid(row=2, column=1)
-        Label(window, text='50%: {}'.format(stats['fifty'])).grid(row=3, column=1)
-        Label(window, text='75%: {}'.format(stats['seventyFive'])).grid(row=4, column=1)
-        Label(window, text='97.5%: {}'.format(stats['ninetySevenFive'])).grid(row=5, column=1)
-        Label(window, text='99.9%: {}'.format(stats['ninetyNineNine'])).grid(row=6, column=1)
+        Label(window, text='Count: {}'.format(stats['count'])).grid(row=0, column=0, sticky='w')
+        Label(window, text='Mean: {}'.format(stats['mean'])).grid(row=1, column=0, sticky='w')
+        Label(window, text='Std: {}'.format(stats['std'])).grid(row=2, column=0, sticky='w')
+        Label(window, text='Min: {}'.format(stats['min'])).grid(row=3, column=0, sticky='w')
+        Label(window, text='Max: {}'.format(stats['max'])).grid(row=4, column=0, sticky='w')
+        Label(window, text='Kurtosis: {}'.format(stats['kurtosis'])).grid(row=5, column=0, sticky='w')
+        Label(window, text='Skewness: {}'.format(stats['skewness'])).grid(row=6, column=0, sticky='w')
+        Label(window, text='.2%: {}'.format(stats['twoTenths'])).grid(row=0, column=1, sticky='w')
+        Label(window, text='2.5%: {}'.format(stats['twoFive'])).grid(row=1, column=1, sticky='w')
+        Label(window, text='25%: {}'.format(stats['twentyFive'])).grid(row=2, column=1, sticky='w')
+        Label(window, text='50%: {}'.format(stats['fifty'])).grid(row=3, column=1, sticky='w')
+        Label(window, text='75%: {}'.format(stats['seventyFive'])).grid(row=4, column=1, sticky='w')
+        Label(window, text='97.5%: {}'.format(stats['ninetySevenFive'])).grid(row=5, column=1, sticky='w')
+        Label(window, text='99.9%: {}'.format(stats['ninetyNineNine'])).grid(row=6, column=1, sticky='w')
 
     @staticmethod
     def get_interval_string(variant):
