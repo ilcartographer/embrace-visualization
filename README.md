@@ -45,7 +45,7 @@ When the data is loaded, the main window will render the graphs along with a few
 the full raw data.
 * A range slide is shown in the middle, with labels on either side indicating the time range that is desired.
 
-![](images/usermanual/graphs_loaded.jpg)
+![](images/usermanual/graphs_loaded.JPG)
 
 The graph page is scrollable, so the user can scroll up and down to view the graphs that don't fit in the window.
 
